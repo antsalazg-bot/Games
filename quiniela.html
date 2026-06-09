@@ -59,6 +59,16 @@ input::placeholder{color:rgba(255,255,255,.3)}
 .sep{border-top:.5px solid #2a2a2a;margin:.75rem 0}
 .back-link{display:block;text-align:center;font-size:12px;color:rgba(255,255,255,.3);margin-bottom:.5rem;text-decoration:none}
 .back-link:hover{color:#C8A951}
+@media (max-width:360px){
+  .wrap{padding:0 .75rem 2rem}
+  .main{padding:.75rem .75rem 3rem}
+  .pcard{padding:.75rem .75rem}
+  .sinput{width:38px;font-size:16px;padding:6px 2px}
+  .pteam{font-size:12px}
+  .nav-btn{font-size:10px;padding:10px 2px}
+  .tname{font-size:13px}
+  .tpts{font-size:16px}
+}
 </style>
 </head>
 <body>
@@ -111,6 +121,111 @@ input::placeholder{color:rgba(255,255,255,.3)}
 
 <script>
 const API='https://script.google.com/macros/s/AKfycbzDmxhKHU-LBM7VK1d1Nnbm4HM98UT7wod-MX3Mia0BYstv8SIs-S6Q0RlABZcaS-BHNw/exec';
+
+// Kickoff times in CDMX (UTC-6) as timestamps
+const KICKOFFS = {
+  A1: new Date('2026-06-11T13:00:00-06:00'),
+  A2: new Date('2026-06-11T20:00:00-06:00'),
+  A3: new Date('2026-06-18T10:00:00-06:00'),
+  A4: new Date('2026-06-18T19:00:00-06:00'),
+  A5: new Date('2026-06-24T19:00:00-06:00'),
+  A6: new Date('2026-06-24T19:00:00-06:00'),
+  B1: new Date('2026-06-12T13:00:00-06:00'),
+  B2: new Date('2026-06-13T13:00:00-06:00'),
+  B3: new Date('2026-06-18T13:00:00-06:00'),
+  B4: new Date('2026-06-18T16:00:00-06:00'),
+  B5: new Date('2026-06-24T13:00:00-06:00'),
+  B6: new Date('2026-06-24T13:00:00-06:00'),
+  C1: new Date('2026-06-13T16:00:00-06:00'),
+  C2: new Date('2026-06-13T19:00:00-06:00'),
+  C3: new Date('2026-06-19T16:00:00-06:00'),
+  C4: new Date('2026-06-19T19:00:00-06:00'),
+  C5: new Date('2026-06-24T16:00:00-06:00'),
+  C6: new Date('2026-06-24T16:00:00-06:00'),
+  D1: new Date('2026-06-12T19:00:00-06:00'),
+  D2: new Date('2026-06-13T22:00:00-06:00'),
+  D3: new Date('2026-06-19T13:00:00-06:00'),
+  D4: new Date('2026-06-19T22:00:00-06:00'),
+  D5: new Date('2026-06-25T20:00:00-06:00'),
+  D6: new Date('2026-06-25T20:00:00-06:00'),
+  E1: new Date('2026-06-14T11:00:00-06:00'),
+  E2: new Date('2026-06-14T17:00:00-06:00'),
+  E3: new Date('2026-06-20T14:00:00-06:00'),
+  E4: new Date('2026-06-20T18:00:00-06:00'),
+  E5: new Date('2026-06-25T14:00:00-06:00'),
+  E6: new Date('2026-06-25T14:00:00-06:00'),
+  F1: new Date('2026-06-14T14:00:00-06:00'),
+  F2: new Date('2026-06-14T20:00:00-06:00'),
+  F3: new Date('2026-06-20T11:00:00-06:00'),
+  F4: new Date('2026-06-20T22:00:00-06:00'),
+  F5: new Date('2026-06-25T17:00:00-06:00'),
+  F6: new Date('2026-06-25T17:00:00-06:00'),
+  G1: new Date('2026-06-15T13:00:00-06:00'),
+  G2: new Date('2026-06-15T19:00:00-06:00'),
+  G3: new Date('2026-06-21T13:00:00-06:00'),
+  G4: new Date('2026-06-21T19:00:00-06:00'),
+  G5: new Date('2026-06-26T21:00:00-06:00'),
+  G6: new Date('2026-06-26T21:00:00-06:00'),
+  H1: new Date('2026-06-15T10:00:00-06:00'),
+  H2: new Date('2026-06-15T16:00:00-06:00'),
+  H3: new Date('2026-06-21T10:00:00-06:00'),
+  H4: new Date('2026-06-21T16:00:00-06:00'),
+  H5: new Date('2026-06-26T18:00:00-06:00'),
+  H6: new Date('2026-06-26T18:00:00-06:00'),
+  I1: new Date('2026-06-16T13:00:00-06:00'),
+  I2: new Date('2026-06-16T16:00:00-06:00'),
+  I3: new Date('2026-06-22T15:00:00-06:00'),
+  I4: new Date('2026-06-22T18:00:00-06:00'),
+  I5: new Date('2026-06-26T13:00:00-06:00'),
+  I6: new Date('2026-06-26T13:00:00-06:00'),
+  J1: new Date('2026-06-16T19:00:00-06:00'),
+  J2: new Date('2026-06-16T22:00:00-06:00'),
+  J3: new Date('2026-06-22T11:00:00-06:00'),
+  J4: new Date('2026-06-22T21:00:00-06:00'),
+  J5: new Date('2026-06-27T20:00:00-06:00'),
+  J6: new Date('2026-06-27T20:00:00-06:00'),
+  K1: new Date('2026-06-17T11:00:00-06:00'),
+  K2: new Date('2026-06-17T20:00:00-06:00'),
+  K3: new Date('2026-06-23T11:00:00-06:00'),
+  K4: new Date('2026-06-23T20:00:00-06:00'),
+  K5: new Date('2026-06-27T17:30:00-06:00'),
+  K6: new Date('2026-06-27T17:30:00-06:00'),
+  L1: new Date('2026-06-17T14:00:00-06:00'),
+  L2: new Date('2026-06-17T17:00:00-06:00'),
+  L3: new Date('2026-06-23T14:00:00-06:00'),
+  L4: new Date('2026-06-23T17:00:00-06:00'),
+  L5: new Date('2026-06-27T15:00:00-06:00'),
+  L6: new Date('2026-06-27T15:00:00-06:00'),
+  R1: new Date('2026-06-30T19:00:00-06:00'),
+  R2: new Date('2026-06-28T13:00:00-06:00'),
+  R3: new Date('2026-06-29T11:00:00-06:00'),
+  R4: new Date('2026-06-29T19:00:00-06:00'),
+  R5: new Date('2026-06-30T11:00:00-06:00'),
+  R6: new Date('2026-06-30T15:00:00-06:00'),
+  R7: new Date('2026-07-01T10:00:00-06:00'),
+  R8: new Date('2026-07-01T14:00:00-06:00'),
+  R9: new Date('2026-07-01T18:00:00-06:00'),
+  R10: new Date('2026-07-02T13:00:00-06:00'),
+  R11: new Date('2026-07-02T17:00:00-06:00'),
+  R12: new Date('2026-07-02T19:00:00-06:00'),
+  R13: new Date('2026-07-03T12:00:00-06:00'),
+  R14: new Date('2026-07-03T16:00:00-06:00'),
+  R15: new Date('2026-07-03T19:30:00-06:00'),
+  QF1: new Date('2026-07-09T14:00:00-06:00'),
+  QF2: new Date('2026-07-10T13:00:00-06:00'),
+  QF3: new Date('2026-07-11T15:00:00-06:00'),
+  QF4: new Date('2026-07-11T19:00:00-06:00'),
+  SF1: new Date('2026-07-14T13:00:00-06:00'),
+  SF2: new Date('2026-07-15T13:00:00-06:00'),
+  '3P': new Date('2026-07-18T15:00:00-06:00'),
+  FIN: new Date('2026-07-19T13:00:00-06:00'),
+};
+
+function matchStarted(id) {
+  const ko = KICKOFFS[id];
+  if (!ko) return false;
+  return Date.now() >= ko.getTime();
+}
 
 const PARTIDOS=[
   {id:'A1',g:'A',local:'México',visit:'Sudáfrica',fecha:'11 jun 13:00',sede:'Azteca',mx:true},
@@ -334,6 +449,7 @@ function renderPicks(){
     ps.forEach(p=>{
       const pred=picks[p.id]||{};
       const res=allData.resultados[p.id];
+      const started=matchStarted(p.id);
       const pts=calcPts(pred,res);
       const badge=pts!==null?`<span class="pbadge p${pts}">${pts===3?'3pts ✓':pts===1?'1pt ~':'0pts ✗'}</span>`:'';
       html+=`<div class="pcard${p.mx?' mx':''}">
@@ -345,13 +461,13 @@ function renderPicks(){
         </div>
         <div class="pinputs">
           <div style="flex:1;display:flex;justify-content:flex-start">
-            <input type="number" class="sinput" id="l_${p.id}" min="0" max="20" value="${pred.predLocal??''}" placeholder="0" value=""${res?' disabled':''}>
+            <input type="number" class="sinput" inputmode="numeric" pattern="[0-9]*" id="l_${p.id}" min="0" max="20" value="${pred.predLocal??''}" placeholder="0" value=""${res?' disabled':''}>
           </div>
           <span class="ssep">—</span>
           <div style="flex:1;display:flex;justify-content:flex-end">
-            <input type="number" class="sinput" id="v_${p.id}" min="0" max="20" value="${pred.predVisitante??''}" placeholder="0" value=""${res?' disabled':''}>
+            <input type="number" class="sinput" inputmode="numeric" pattern="[0-9]*" id="v_${p.id}" min="0" max="20" value="${pred.predVisitante??''}" placeholder="0" value=""${res?' disabled':''}>
           </div>
-          ${badge}
+          ${badge}${started&&!res?'<span style="font-size:10px;color:#f87171;margin-left:6px">🔒 En curso</span>':''}
         </div>
         ${res?`<div class="presult">Resultado: ${res.local} - ${res.visitante}</div>`:''}
       </div>`;
@@ -427,9 +543,9 @@ function renderResultados(){
         <div class="pmeta"><span>${p.fecha}</span><span>${p.sede}</span></div>
         <div class="pteams"><span class="pteam">${p.local}</span><span class="pvs">vs</span><span class="pteam r">${p.visit}</span></div>
         <div class="pinputs">
-          <input type="number" class="sinput" id="rl_${p.id}" min="0" max="20" value="${res.local??''}" placeholder="0" value="">
+          <input type="number" class="sinput" inputmode="numeric" pattern="[0-9]*" id="rl_${p.id}" min="0" max="20" value="${res.local??''}" placeholder="0" value="">
           <span class="ssep">—</span>
-          <input type="number" class="sinput" id="rv_${p.id}" min="0" max="20" value="${res.visitante??''}" placeholder="0" value="">
+          <input type="number" class="sinput" inputmode="numeric" pattern="[0-9]*" id="rv_${p.id}" min="0" max="20" value="${res.visitante??''}" placeholder="0" value="">
           <button onclick="saveRes('${p.id}')" style="margin-left:6px;background:#333;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:11px;cursor:pointer;font-family:inherit">Guardar</button>
         </div>
       </div>`;
