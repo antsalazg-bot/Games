@@ -1,0 +1,566 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mundial 2026 — Cuenta Regresiva</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:#0a0a0a;font-family:'Helvetica Neue',Arial,sans-serif;color:#fff}
+  .hero{text-align:center;padding:2.5rem 1.5rem 2rem}
+  .balon{font-size:44px;display:block;margin-bottom:1rem;animation:spin 4s linear infinite}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .badge{display:inline-block;font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:#C8A951;border:1px solid #C8A951;padding:4px 14px;border-radius:20px;margin-bottom:1.25rem}
+  .titulo{font-size:clamp(26px,7vw,40px);font-weight:700;line-height:1.1;margin-bottom:.4rem;letter-spacing:-.02em}
+  .subtitulo{font-size:14px;color:rgba(255,255,255,.4);margin-bottom:2rem}
+  .banderas{font-size:26px;margin-bottom:2rem;letter-spacing:4px}
+  .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;max-width:480px;margin:0 auto 1.75rem;padding:0 1rem}
+  .bloque{background:#161616;border:.5px solid #2a2a2a;border-radius:12px;padding:1.1rem .5rem .9rem;position:relative;overflow:hidden}
+  .bloque::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:#C8A951;opacity:.6}
+  .num{font-size:clamp(28px,8vw,44px);font-weight:700;line-height:1;margin-bottom:5px;font-variant-numeric:tabular-nums}
+  .lbl{font-size:10px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.1em}
+  .mensaje{font-size:15px;color:#C8A951;font-weight:500;margin-bottom:.3rem;text-align:center}
+  .fecha-txt{font-size:12px;color:rgba(255,255,255,.25);text-align:center;margin-bottom:2rem}
+  .seccion{max-width:480px;margin:0 auto;padding:0 1rem}
+  .card{background:#161616;border:.5px solid #2a2a2a;border-radius:12px;padding:1.25rem;margin-bottom:10px}
+  .card-titulo{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#C8A951;margin-bottom:.75rem}
+  .dir-row{font-size:14px;color:rgba(255,255,255,.8);line-height:1.5;margin-bottom:.75rem;display:flex;align-items:flex-start;gap:8px}
+  .inv-label{font-size:11px;color:rgba(255,255,255,.35);text-transform:uppercase;letter-spacing:.08em;margin-bottom:.6rem}
+  .chips{display:flex;flex-wrap:wrap;gap:6px}
+  .chip{background:#1e1e1e;border:.5px solid #333;border-radius:20px;padding:3px 10px;font-size:12px;color:rgba(255,255,255,.7)}
+  .sep{border-top:.5px solid #2a2a2a;margin:.75rem 0 .75rem}
+  .fase-titulo{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:#C8A951;text-align:center;margin:1.5rem 0 1rem}
+  .dia-header{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:rgba(255,255,255,.35);padding:8px 0 4px;border-bottom:.5px solid #222;margin-bottom:2px}
+  .p-row{display:flex;align-items:center;padding:6px 0;border-bottom:.5px solid #1a1a1a;gap:6px}
+  .p-row:last-child{border-bottom:none}
+  .p-grupo{font-size:10px;color:#C8A951;min-width:18px;font-weight:700}
+  .p-teams{font-size:12px;color:rgba(255,255,255,.8);flex:1}
+  .p-hora{font-size:11px;color:rgba(255,255,255,.4);min-width:42px;text-align:right;white-space:nowrap}
+  .mx{background:rgba(200,169,81,.07);border-radius:6px;margin:2px -4px;padding:4px 4px}
+  .mx .p-teams{color:#fff;font-weight:500}
+  .footer-txt{text-align:center;font-size:11px;color:rgba(255,255,255,.15);padding:1.5rem 1rem 2rem}
+</style>
+</head>
+<body>
+
+<!-- PLAYERAS -->
+<div style="padding:1.5rem 0 0;text-align:center">
+  <p style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#C8A951;margin-bottom:3px">Tu playera del Mundial</p>
+  <p style="font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;color:rgba(255,255,255,.3);letter-spacing:.06em;margin-bottom:.75rem">11 de junio · Estadio Azteca</p>
+  <div style="display:flex;flex-wrap:wrap;justify-content:center;gap:8px;padding:0 1rem 1rem">
+    <div style="flex:0 0 90px;width:90px"><svg viewBox="0 0 130 160" xmlns="http://www.w3.org/2000/svg">
+  <defs><clipPath id="p1"><path d="M32,8 L6,34 L20,42 L20,148 L110,148 L110,42 L124,34 L98,8 L76,20 Q65,25 54,20Z"/></clipPath></defs>
+  <path d="M32,8 L6,34 L20,42 L20,148 L110,148 L110,42 L124,34 L98,8 L76,20 Q65,25 54,20Z" fill="#005B2F"/>
+  <line x1="20" y1="148" x2="110" y2="42" stroke="rgba(255,255,255,0.04)" stroke-width="8" clip-path="url(#p1)"/>
+  <line x1="10" y1="148" x2="100" y2="42" stroke="rgba(255,255,255,0.04)" stroke-width="8" clip-path="url(#p1)"/>
+  <line x1="30" y1="148" x2="120" y2="42" stroke="rgba(255,255,255,0.04)" stroke-width="8" clip-path="url(#p1)"/>
+  <path d="M32,8 L6,34 L20,42 L20,70 Q26,67 32,70 L32,34 Q32,20 32,8Z" fill="#004A26"/>
+  <path d="M98,8 L124,34 L110,42 L110,70 Q104,67 98,70 L98,34 Q98,20 98,8Z" fill="#004A26"/>
+  <rect x="7" y="48" width="12" height="3" fill="#006847" clip-path="url(#p1)"/>
+  <rect x="7" y="51" width="12" height="3" fill="white" clip-path="url(#p1)"/>
+  <rect x="7" y="54" width="12" height="3" fill="#CE1126" clip-path="url(#p1)"/>
+  <rect x="111" y="48" width="12" height="3" fill="#006847" clip-path="url(#p1)"/>
+  <rect x="111" y="51" width="12" height="3" fill="white" clip-path="url(#p1)"/>
+  <rect x="111" y="54" width="12" height="3" fill="#CE1126" clip-path="url(#p1)"/>
+  <path d="M54,20 Q65,25 76,20 L65,38 Z" fill="#CE1126"/>
+  <path d="M54,20 L58,20 L65,34 L65,38 Z" fill="white"/>
+  <path d="M76,20 L72,20 L65,34 L65,38 Z" fill="#005B2F"/>
+  <rect x="20" y="75" width="90" height="10" fill="rgba(0,0,0,0.12)" clip-path="url(#p1)"/>
+  <ellipse cx="38" cy="55" rx="9" ry="10" fill="#C8A951"/>
+  <ellipse cx="38" cy="55" rx="7" ry="8" fill="#005B2F"/>
+  <path d="M34,52 Q38,48 42,52 L41,58 Q38,62 35,58 Z" fill="#C8A951"/>
+  <ellipse cx="38" cy="50" rx="3" ry="2.5" fill="#C8A951"/>
+  <line x1="30" y1="54" x2="34" y2="54" stroke="#C8A951" stroke-width="1.5"/>
+  <line x1="42" y1="54" x2="46" y2="54" stroke="#C8A951" stroke-width="1.5"/>
+  <text x="70" y="112" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="38" font-weight="900" fill="white" opacity="0.9">1</text>
+  <text x="72" y="114" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="38" font-weight="900" fill="#004A26" opacity="0.4">1</text>
+  <rect x="22" y="124" width="86" height="17" rx="1" fill="#C8A951"/>
+  <text x="65" y="136.5" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="10" font-weight="900" fill="#004A26" letter-spacing="2">AARÓN</text>
+  </svg></div>
+    <div style="flex:0 0 90px;width:90px"><svg viewBox="0 0 130 160" xmlns="http://www.w3.org/2000/svg">
+  <defs><clipPath id="p2"><path d="M32,8 L6,34 L20,42 L20,148 L110,148 L110,42 L124,34 L98,8 L76,20 Q65,25 54,20Z"/></clipPath></defs>
+  <path d="M32,8 L6,34 L20,42 L20,148 L110,148 L110,42 L124,34 L98,8 L76,20 Q65,25 54,20Z" fill="#005B2F"/>
+  <line x1="20" y1="148" x2="110" y2="42" stroke="rgba(255,255,255,0.04)" stroke-width="8" clip-path="url(#p2)"/>
+  <line x1="10" y1="148" x2="100" y2="42" stroke="rgba(255,255,255,0.04)" stroke-width="8" clip-path="url(#p2)"/>
+  <line x1="30" y1="148" x2="120" y2="42" stroke="rgba(255,255,255,0.04)" stroke-width="8" clip-path="url(#p2)"/>
+  <path d="M32,8 L6,34 L20,42 L20,70 Q26,67 32,70 L32,34 Q32,20 32,8Z" fill="#004A26"/>
+  <path d="M98,8 L124,34 L110,42 L110,70 Q104,67 98,70 L98,34 Q98,20 98,8Z" fill="#004A26"/>
+  <rect x="7" y="48" width="12" height="3" fill="#006847" clip-path="url(#p2)"/>
+  <rect x="7" y="51" width="12" height="3" fill="white" clip-path="url(#p2)"/>
+  <rect x="7" y="54" width="12" height="3" fill="#CE1126" clip-path="url(#p2)"/>
+  <rect x="111" y="48" width="12" height="3" fill="#006847" clip-path="url(#p2)"/>
+  <rect x="111" y="51" width="12" height="3" fill="white" clip-path="url(#p2)"/>
+  <rect x="111" y="54" width="12" height="3" fill="#CE1126" clip-path="url(#p2)"/>
+  <path d="M54,20 Q65,25 76,20 L65,38 Z" fill="#CE1126"/>
+  <path d="M54,20 L58,20 L65,34 L65,38 Z" fill="white"/>
+  <path d="M76,20 L72,20 L65,34 L65,38 Z" fill="#005B2F"/>
+  <rect x="20" y="75" width="90" height="10" fill="rgba(0,0,0,0.12)" clip-path="url(#p2)"/>
+  <ellipse cx="38" cy="55" rx="9" ry="10" fill="#C8A951"/>
+  <ellipse cx="38" cy="55" rx="7" ry="8" fill="#005B2F"/>
+  <path d="M34,52 Q38,48 42,52 L41,58 Q38,62 35,58 Z" fill="#C8A951"/>
+  <ellipse cx="38" cy="50" rx="3" ry="2.5" fill="#C8A951"/>
+  <line x1="30" y1="54" x2="34" y2="54" stroke="#C8A951" stroke-width="1.5"/>
+  <line x1="42" y1="54" x2="46" y2="54" stroke="#C8A951" stroke-width="1.5"/>
+  <text x="70" y="112" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="38" font-weight="900" fill="white" opacity="0.9">2</text>
+  <text x="72" y="114" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="38" font-weight="900" fill="#004A26" opacity="0.4">2</text>
+  <rect x="22" y="124" width="86" height="17" rx="1" fill="#C8A951"/>
+  <text x="65" y="136.5" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="11" font-weight="900" fill="#004A26" letter-spacing="2">TERE</text>
+  </svg></div>
+    <div style="flex:0 0 90px;width:90px"><svg viewBox="0 0 130 160" xmlns="http://www.w3.org/2000/svg">
+  <defs><clipPath id="p3"><path d="M32,8 L6,34 L20,42 L20,148 L110,148 L110,42 L124,34 L98,8 L76,20 Q65,25 54,20Z"/></clipPath></defs>
+  <path d="M32,8 L6,34 L20,42 L20,148 L110,148 L110,42 L124,34 L98,8 L76,20 Q65,25 54,20Z" fill="#005B2F"/>
+  <line x1="20" y1="148" x2="110" y2="42" stroke="rgba(255,255,255,0.04)" stroke-width="8" clip-path="url(#p3)"/>
+  <line x1="10" y1="148" x2="100" y2="42" stroke="rgba(255,255,255,0.04)" stroke-width="8" clip-path="url(#p3)"/>
+  <line x1="30" y1="148" x2="120" y2="42" stroke="rgba(255,255,255,0.04)" stroke-width="8" clip-path="url(#p3)"/>
+  <path d="M32,8 L6,34 L20,42 L20,70 Q26,67 32,70 L32,34 Q32,20 32,8Z" fill="#004A26"/>
+  <path d="M98,8 L124,34 L110,42 L110,70 Q104,67 98,70 L98,34 Q98,20 98,8Z" fill="#004A26"/>
+  <rect x="7" y="48" width="12" height="3" fill="#006847" clip-path="url(#p3)"/>
+  <rect x="7" y="51" width="12" height="3" fill="white" clip-path="url(#p3)"/>
+  <rect x="7" y="54" width="12" height="3" fill="#CE1126" clip-path="url(#p3)"/>
+  <rect x="111" y="48" width="12" height="3" fill="#006847" clip-path="url(#p3)"/>
+  <rect x="111" y="51" width="12" height="3" fill="white" clip-path="url(#p3)"/>
+  <rect x="111" y="54" width="12" height="3" fill="#CE1126" clip-path="url(#p3)"/>
+  <path d="M54,20 Q65,25 76,20 L65,38 Z" fill="#CE1126"/>
+  <path d="M54,20 L58,20 L65,34 L65,38 Z" fill="white"/>
+  <path d="M76,20 L72,20 L65,34 L65,38 Z" fill="#005B2F"/>
+  <rect x="20" y="75" width="90" height="10" fill="rgba(0,0,0,0.12)" clip-path="url(#p3)"/>
+  <ellipse cx="38" cy="55" rx="9" ry="10" fill="#C8A951"/>
+  <ellipse cx="38" cy="55" rx="7" ry="8" fill="#005B2F"/>
+  <path d="M34,52 Q38,48 42,52 L41,58 Q38,62 35,58 Z" fill="#C8A951"/>
+  <ellipse cx="38" cy="50" rx="3" ry="2.5" fill="#C8A951"/>
+  <line x1="30" y1="54" x2="34" y2="54" stroke="#C8A951" stroke-width="1.5"/>
+  <line x1="42" y1="54" x2="46" y2="54" stroke="#C8A951" stroke-width="1.5"/>
+  <text x="70" y="112" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="38" font-weight="900" fill="white" opacity="0.9">3</text>
+  <text x="72" y="114" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="38" font-weight="900" fill="#004A26" opacity="0.4">3</text>
+  <rect x="22" y="124" width="86" height="17" rx="1" fill="#C8A951"/>
+  <text x="65" y="136.5" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="10.5" font-weight="900" fill="#004A26" letter-spacing="2">KARLA</text>
+  </svg></div>
+    <div style="flex:0 0 90px;width:90px"><svg viewBox="0 0 130 160" xmlns="http://www.w3.org/2000/svg">
+  <defs><clipPath id="p4"><path d="M32,8 L6,34 L20,42 L20,148 L110,148 L110,42 L124,34 L98,8 L76,20 Q65,25 54,20Z"/></clipPath></defs>
+  <path d="M32,8 L6,34 L20,42 L20,148 L110,148 L110,42 L124,34 L98,8 L76,20 Q65,25 54,20Z" fill="#005B2F"/>
+  <line x1="20" y1="148" x2="110" y2="42" stroke="rgba(255,255,255,0.04)" stroke-width="8" clip-path="url(#p4)"/>
+  <line x1="10" y1="148" x2="100" y2="42" stroke="rgba(255,255,255,0.04)" stroke-width="8" clip-path="url(#p4)"/>
+  <line x1="30" y1="148" x2="120" y2="42" stroke="rgba(255,255,255,0.04)" stroke-width="8" clip-path="url(#p4)"/>
+  <path d="M32,8 L6,34 L20,42 L20,70 Q26,67 32,70 L32,34 Q32,20 32,8Z" fill="#004A26"/>
+  <path d="M98,8 L124,34 L110,42 L110,70 Q104,67 98,70 L98,34 Q98,20 98,8Z" fill="#004A26"/>
+  <rect x="7" y="48" width="12" height="3" fill="#006847" clip-path="url(#p4)"/>
+  <rect x="7" y="51" width="12" height="3" fill="white" clip-path="url(#p4)"/>
+  <rect x="7" y="54" width="12" height="3" fill="#CE1126" clip-path="url(#p4)"/>
+  <rect x="111" y="48" width="12" height="3" fill="#006847" clip-path="url(#p4)"/>
+  <rect x="111" y="51" width="12" height="3" fill="white" clip-path="url(#p4)"/>
+  <rect x="111" y="54" width="12" height="3" fill="#CE1126" clip-path="url(#p4)"/>
+  <path d="M54,20 Q65,25 76,20 L65,38 Z" fill="#CE1126"/>
+  <path d="M54,20 L58,20 L65,34 L65,38 Z" fill="white"/>
+  <path d="M76,20 L72,20 L65,34 L65,38 Z" fill="#005B2F"/>
+  <rect x="20" y="75" width="90" height="10" fill="rgba(0,0,0,0.12)" clip-path="url(#p4)"/>
+  <ellipse cx="38" cy="55" rx="9" ry="10" fill="#C8A951"/>
+  <ellipse cx="38" cy="55" rx="7" ry="8" fill="#005B2F"/>
+  <path d="M34,52 Q38,48 42,52 L41,58 Q38,62 35,58 Z" fill="#C8A951"/>
+  <ellipse cx="38" cy="50" rx="3" ry="2.5" fill="#C8A951"/>
+  <line x1="30" y1="54" x2="34" y2="54" stroke="#C8A951" stroke-width="1.5"/>
+  <line x1="42" y1="54" x2="46" y2="54" stroke="#C8A951" stroke-width="1.5"/>
+  <text x="70" y="112" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="38" font-weight="900" fill="white" opacity="0.9">4</text>
+  <text x="72" y="114" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="38" font-weight="900" fill="#004A26" opacity="0.4">4</text>
+  <rect x="22" y="124" width="86" height="17" rx="1" fill="#C8A951"/>
+  <text x="65" y="136.5" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="9" font-weight="900" fill="#004A26" letter-spacing="1.5">ARMANDO</text>
+  </svg></div>
+    <div style="flex:0 0 90px;width:90px"><svg viewBox="0 0 130 160" xmlns="http://www.w3.org/2000/svg">
+  <defs><clipPath id="p5"><path d="M32,8 L6,34 L20,42 L20,148 L110,148 L110,42 L124,34 L98,8 L76,20 Q65,25 54,20Z"/></clipPath></defs>
+  <path d="M32,8 L6,34 L20,42 L20,148 L110,148 L110,42 L124,34 L98,8 L76,20 Q65,25 54,20Z" fill="#005B2F"/>
+  <line x1="20" y1="148" x2="110" y2="42" stroke="rgba(255,255,255,0.04)" stroke-width="8" clip-path="url(#p5)"/>
+  <line x1="10" y1="148" x2="100" y2="42" stroke="rgba(255,255,255,0.04)" stroke-width="8" clip-path="url(#p5)"/>
+  <line x1="30" y1="148" x2="120" y2="42" stroke="rgba(255,255,255,0.04)" stroke-width="8" clip-path="url(#p5)"/>
+  <path d="M32,8 L6,34 L20,42 L20,70 Q26,67 32,70 L32,34 Q32,20 32,8Z" fill="#004A26"/>
+  <path d="M98,8 L124,34 L110,42 L110,70 Q104,67 98,70 L98,34 Q98,20 98,8Z" fill="#004A26"/>
+  <rect x="7" y="48" width="12" height="3" fill="#006847" clip-path="url(#p5)"/>
+  <rect x="7" y="51" width="12" height="3" fill="white" clip-path="url(#p5)"/>
+  <rect x="7" y="54" width="12" height="3" fill="#CE1126" clip-path="url(#p5)"/>
+  <rect x="111" y="48" width="12" height="3" fill="#006847" clip-path="url(#p5)"/>
+  <rect x="111" y="51" width="12" height="3" fill="white" clip-path="url(#p5)"/>
+  <rect x="111" y="54" width="12" height="3" fill="#CE1126" clip-path="url(#p5)"/>
+  <path d="M54,20 Q65,25 76,20 L65,38 Z" fill="#CE1126"/>
+  <path d="M54,20 L58,20 L65,34 L65,38 Z" fill="white"/>
+  <path d="M76,20 L72,20 L65,34 L65,38 Z" fill="#005B2F"/>
+  <rect x="20" y="75" width="90" height="10" fill="rgba(0,0,0,0.12)" clip-path="url(#p5)"/>
+  <ellipse cx="38" cy="55" rx="9" ry="10" fill="#C8A951"/>
+  <ellipse cx="38" cy="55" rx="7" ry="8" fill="#005B2F"/>
+  <path d="M34,52 Q38,48 42,52 L41,58 Q38,62 35,58 Z" fill="#C8A951"/>
+  <ellipse cx="38" cy="50" rx="3" ry="2.5" fill="#C8A951"/>
+  <line x1="30" y1="54" x2="34" y2="54" stroke="#C8A951" stroke-width="1.5"/>
+  <line x1="42" y1="54" x2="46" y2="54" stroke="#C8A951" stroke-width="1.5"/>
+  <text x="70" y="112" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="38" font-weight="900" fill="white" opacity="0.9">5</text>
+  <text x="72" y="114" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="38" font-weight="900" fill="#004A26" opacity="0.4">5</text>
+  <rect x="22" y="124" width="86" height="17" rx="1" fill="#C8A951"/>
+  <text x="65" y="136.5" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="10.5" font-weight="900" fill="#004A26" letter-spacing="2">PRETTY</text>
+  </svg></div>
+    <div style="flex:0 0 90px;width:90px"><svg viewBox="0 0 130 160" xmlns="http://www.w3.org/2000/svg">
+  <defs><clipPath id="p6"><path d="M32,8 L6,34 L20,42 L20,148 L110,148 L110,42 L124,34 L98,8 L76,20 Q65,25 54,20Z"/></clipPath></defs>
+  <path d="M32,8 L6,34 L20,42 L20,148 L110,148 L110,42 L124,34 L98,8 L76,20 Q65,25 54,20Z" fill="#005B2F"/>
+  <line x1="20" y1="148" x2="110" y2="42" stroke="rgba(255,255,255,0.04)" stroke-width="8" clip-path="url(#p6)"/>
+  <line x1="10" y1="148" x2="100" y2="42" stroke="rgba(255,255,255,0.04)" stroke-width="8" clip-path="url(#p6)"/>
+  <line x1="30" y1="148" x2="120" y2="42" stroke="rgba(255,255,255,0.04)" stroke-width="8" clip-path="url(#p6)"/>
+  <path d="M32,8 L6,34 L20,42 L20,70 Q26,67 32,70 L32,34 Q32,20 32,8Z" fill="#004A26"/>
+  <path d="M98,8 L124,34 L110,42 L110,70 Q104,67 98,70 L98,34 Q98,20 98,8Z" fill="#004A26"/>
+  <rect x="7" y="48" width="12" height="3" fill="#006847" clip-path="url(#p6)"/>
+  <rect x="7" y="51" width="12" height="3" fill="white" clip-path="url(#p6)"/>
+  <rect x="7" y="54" width="12" height="3" fill="#CE1126" clip-path="url(#p6)"/>
+  <rect x="111" y="48" width="12" height="3" fill="#006847" clip-path="url(#p6)"/>
+  <rect x="111" y="51" width="12" height="3" fill="white" clip-path="url(#p6)"/>
+  <rect x="111" y="54" width="12" height="3" fill="#CE1126" clip-path="url(#p6)"/>
+  <path d="M54,20 Q65,25 76,20 L65,38 Z" fill="#CE1126"/>
+  <path d="M54,20 L58,20 L65,34 L65,38 Z" fill="white"/>
+  <path d="M76,20 L72,20 L65,34 L65,38 Z" fill="#005B2F"/>
+  <rect x="20" y="75" width="90" height="10" fill="rgba(0,0,0,0.12)" clip-path="url(#p6)"/>
+  <ellipse cx="38" cy="55" rx="9" ry="10" fill="#C8A951"/>
+  <ellipse cx="38" cy="55" rx="7" ry="8" fill="#005B2F"/>
+  <path d="M34,52 Q38,48 42,52 L41,58 Q38,62 35,58 Z" fill="#C8A951"/>
+  <ellipse cx="38" cy="50" rx="3" ry="2.5" fill="#C8A951"/>
+  <line x1="30" y1="54" x2="34" y2="54" stroke="#C8A951" stroke-width="1.5"/>
+  <line x1="42" y1="54" x2="46" y2="54" stroke="#C8A951" stroke-width="1.5"/>
+  <text x="70" y="112" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="38" font-weight="900" fill="white" opacity="0.9">6</text>
+  <text x="72" y="114" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="38" font-weight="900" fill="#004A26" opacity="0.4">6</text>
+  <rect x="22" y="124" width="86" height="17" rx="1" fill="#C8A951"/>
+  <text x="65" y="136.5" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="11" font-weight="900" fill="#004A26" letter-spacing="2">ALINA</text>
+  </svg></div>
+    <div style="flex:0 0 90px;width:90px"><svg viewBox="0 0 130 160" xmlns="http://www.w3.org/2000/svg">
+  <defs><clipPath id="p7"><path d="M32,8 L6,34 L20,42 L20,148 L110,148 L110,42 L124,34 L98,8 L76,20 Q65,25 54,20Z"/></clipPath></defs>
+  <path d="M32,8 L6,34 L20,42 L20,148 L110,148 L110,42 L124,34 L98,8 L76,20 Q65,25 54,20Z" fill="#005B2F"/>
+  <line x1="20" y1="148" x2="110" y2="42" stroke="rgba(255,255,255,0.04)" stroke-width="8" clip-path="url(#p7)"/>
+  <line x1="10" y1="148" x2="100" y2="42" stroke="rgba(255,255,255,0.04)" stroke-width="8" clip-path="url(#p7)"/>
+  <line x1="30" y1="148" x2="120" y2="42" stroke="rgba(255,255,255,0.04)" stroke-width="8" clip-path="url(#p7)"/>
+  <path d="M32,8 L6,34 L20,42 L20,70 Q26,67 32,70 L32,34 Q32,20 32,8Z" fill="#004A26"/>
+  <path d="M98,8 L124,34 L110,42 L110,70 Q104,67 98,70 L98,34 Q98,20 98,8Z" fill="#004A26"/>
+  <rect x="7" y="48" width="12" height="3" fill="#006847" clip-path="url(#p7)"/>
+  <rect x="7" y="51" width="12" height="3" fill="white" clip-path="url(#p7)"/>
+  <rect x="7" y="54" width="12" height="3" fill="#CE1126" clip-path="url(#p7)"/>
+  <rect x="111" y="48" width="12" height="3" fill="#006847" clip-path="url(#p7)"/>
+  <rect x="111" y="51" width="12" height="3" fill="white" clip-path="url(#p7)"/>
+  <rect x="111" y="54" width="12" height="3" fill="#CE1126" clip-path="url(#p7)"/>
+  <path d="M54,20 Q65,25 76,20 L65,38 Z" fill="#CE1126"/>
+  <path d="M54,20 L58,20 L65,34 L65,38 Z" fill="white"/>
+  <path d="M76,20 L72,20 L65,34 L65,38 Z" fill="#005B2F"/>
+  <rect x="20" y="75" width="90" height="10" fill="rgba(0,0,0,0.12)" clip-path="url(#p7)"/>
+  <ellipse cx="38" cy="55" rx="9" ry="10" fill="#C8A951"/>
+  <ellipse cx="38" cy="55" rx="7" ry="8" fill="#005B2F"/>
+  <path d="M34,52 Q38,48 42,52 L41,58 Q38,62 35,58 Z" fill="#C8A951"/>
+  <ellipse cx="38" cy="50" rx="3" ry="2.5" fill="#C8A951"/>
+  <line x1="30" y1="54" x2="34" y2="54" stroke="#C8A951" stroke-width="1.5"/>
+  <line x1="42" y1="54" x2="46" y2="54" stroke="#C8A951" stroke-width="1.5"/>
+  <text x="70" y="112" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="38" font-weight="900" fill="white" opacity="0.9">7</text>
+  <text x="72" y="114" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="38" font-weight="900" fill="#004A26" opacity="0.4">7</text>
+  <rect x="22" y="124" width="86" height="17" rx="1" fill="#C8A951"/>
+  <text x="65" y="136.5" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="9" font-weight="900" fill="#004A26" letter-spacing="1.5">ANTONIO</text>
+  </svg></div>
+    <div style="flex:0 0 90px;width:90px"><svg viewBox="0 0 130 160" xmlns="http://www.w3.org/2000/svg">
+  <defs><clipPath id="p8"><path d="M32,8 L6,34 L20,42 L20,148 L110,148 L110,42 L124,34 L98,8 L76,20 Q65,25 54,20Z"/></clipPath></defs>
+  <path d="M32,8 L6,34 L20,42 L20,148 L110,148 L110,42 L124,34 L98,8 L76,20 Q65,25 54,20Z" fill="#005B2F"/>
+  <line x1="20" y1="148" x2="110" y2="42" stroke="rgba(255,255,255,0.04)" stroke-width="8" clip-path="url(#p8)"/>
+  <line x1="10" y1="148" x2="100" y2="42" stroke="rgba(255,255,255,0.04)" stroke-width="8" clip-path="url(#p8)"/>
+  <line x1="30" y1="148" x2="120" y2="42" stroke="rgba(255,255,255,0.04)" stroke-width="8" clip-path="url(#p8)"/>
+  <path d="M32,8 L6,34 L20,42 L20,70 Q26,67 32,70 L32,34 Q32,20 32,8Z" fill="#004A26"/>
+  <path d="M98,8 L124,34 L110,42 L110,70 Q104,67 98,70 L98,34 Q98,20 98,8Z" fill="#004A26"/>
+  <rect x="7" y="48" width="12" height="3" fill="#006847" clip-path="url(#p8)"/>
+  <rect x="7" y="51" width="12" height="3" fill="white" clip-path="url(#p8)"/>
+  <rect x="7" y="54" width="12" height="3" fill="#CE1126" clip-path="url(#p8)"/>
+  <rect x="111" y="48" width="12" height="3" fill="#006847" clip-path="url(#p8)"/>
+  <rect x="111" y="51" width="12" height="3" fill="white" clip-path="url(#p8)"/>
+  <rect x="111" y="54" width="12" height="3" fill="#CE1126" clip-path="url(#p8)"/>
+  <path d="M54,20 Q65,25 76,20 L65,38 Z" fill="#CE1126"/>
+  <path d="M54,20 L58,20 L65,34 L65,38 Z" fill="white"/>
+  <path d="M76,20 L72,20 L65,34 L65,38 Z" fill="#005B2F"/>
+  <rect x="20" y="75" width="90" height="10" fill="rgba(0,0,0,0.12)" clip-path="url(#p8)"/>
+  <ellipse cx="38" cy="55" rx="9" ry="10" fill="#C8A951"/>
+  <ellipse cx="38" cy="55" rx="7" ry="8" fill="#005B2F"/>
+  <path d="M34,52 Q38,48 42,52 L41,58 Q38,62 35,58 Z" fill="#C8A951"/>
+  <ellipse cx="38" cy="50" rx="3" ry="2.5" fill="#C8A951"/>
+  <line x1="30" y1="54" x2="34" y2="54" stroke="#C8A951" stroke-width="1.5"/>
+  <line x1="42" y1="54" x2="46" y2="54" stroke="#C8A951" stroke-width="1.5"/>
+  <text x="70" y="112" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="38" font-weight="900" fill="white" opacity="0.9">8</text>
+  <text x="72" y="114" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="38" font-weight="900" fill="#004A26" opacity="0.4">8</text>
+  <rect x="22" y="124" width="86" height="17" rx="1" fill="#C8A951"/>
+  <text x="65" y="136.5" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="10.5" font-weight="900" fill="#004A26" letter-spacing="2">FÁTIMA</text>
+  </svg></div>
+    <div style="flex:0 0 90px;width:90px"><svg viewBox="0 0 130 160" xmlns="http://www.w3.org/2000/svg">
+  <defs><clipPath id="p9"><path d="M32,8 L6,34 L20,42 L20,148 L110,148 L110,42 L124,34 L98,8 L76,20 Q65,25 54,20Z"/></clipPath></defs>
+  <path d="M32,8 L6,34 L20,42 L20,148 L110,148 L110,42 L124,34 L98,8 L76,20 Q65,25 54,20Z" fill="#005B2F"/>
+  <line x1="20" y1="148" x2="110" y2="42" stroke="rgba(255,255,255,0.04)" stroke-width="8" clip-path="url(#p9)"/>
+  <line x1="10" y1="148" x2="100" y2="42" stroke="rgba(255,255,255,0.04)" stroke-width="8" clip-path="url(#p9)"/>
+  <line x1="30" y1="148" x2="120" y2="42" stroke="rgba(255,255,255,0.04)" stroke-width="8" clip-path="url(#p9)"/>
+  <path d="M32,8 L6,34 L20,42 L20,70 Q26,67 32,70 L32,34 Q32,20 32,8Z" fill="#004A26"/>
+  <path d="M98,8 L124,34 L110,42 L110,70 Q104,67 98,70 L98,34 Q98,20 98,8Z" fill="#004A26"/>
+  <rect x="7" y="48" width="12" height="3" fill="#006847" clip-path="url(#p9)"/>
+  <rect x="7" y="51" width="12" height="3" fill="white" clip-path="url(#p9)"/>
+  <rect x="7" y="54" width="12" height="3" fill="#CE1126" clip-path="url(#p9)"/>
+  <rect x="111" y="48" width="12" height="3" fill="#006847" clip-path="url(#p9)"/>
+  <rect x="111" y="51" width="12" height="3" fill="white" clip-path="url(#p9)"/>
+  <rect x="111" y="54" width="12" height="3" fill="#CE1126" clip-path="url(#p9)"/>
+  <path d="M54,20 Q65,25 76,20 L65,38 Z" fill="#CE1126"/>
+  <path d="M54,20 L58,20 L65,34 L65,38 Z" fill="white"/>
+  <path d="M76,20 L72,20 L65,34 L65,38 Z" fill="#005B2F"/>
+  <rect x="20" y="75" width="90" height="10" fill="rgba(0,0,0,0.12)" clip-path="url(#p9)"/>
+  <ellipse cx="38" cy="55" rx="9" ry="10" fill="#C8A951"/>
+  <ellipse cx="38" cy="55" rx="7" ry="8" fill="#005B2F"/>
+  <path d="M34,52 Q38,48 42,52 L41,58 Q38,62 35,58 Z" fill="#C8A951"/>
+  <ellipse cx="38" cy="50" rx="3" ry="2.5" fill="#C8A951"/>
+  <line x1="30" y1="54" x2="34" y2="54" stroke="#C8A951" stroke-width="1.5"/>
+  <line x1="42" y1="54" x2="46" y2="54" stroke="#C8A951" stroke-width="1.5"/>
+  <text x="70" y="112" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="38" font-weight="900" fill="white" opacity="0.9">9</text>
+  <text x="72" y="114" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="38" font-weight="900" fill="#004A26" opacity="0.4">9</text>
+  <rect x="22" y="124" width="86" height="17" rx="1" fill="#C8A951"/>
+  <text x="65" y="136.5" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="11" font-weight="900" fill="#004A26" letter-spacing="2">ALEX</text>
+  </svg></div>
+  <div style="flex:0 0 90px;width:90px"><svg viewBox="0 0 130 160" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="p10"><path d="M32,8 L6,34 L20,42 L20,148 L110,148 L110,42 L124,34 L98,8 L76,20 Q65,25 54,20Z"/></clipPath></defs><path d="M32,8 L6,34 L20,42 L20,148 L110,148 L110,42 L124,34 L98,8 L76,20 Q65,25 54,20Z" fill="#005B2F"/><path d="M32,8 L6,34 L20,42 L20,70 Q26,67 32,70 L32,34 Q32,20 32,8Z" fill="#004A26"/><path d="M98,8 L124,34 L110,42 L110,70 Q104,67 98,70 L98,34 Q98,20 98,8Z" fill="#004A26"/><rect x="7" y="48" width="12" height="3" fill="#006847" clip-path="url(#p10)"/><rect x="7" y="51" width="12" height="3" fill="white" clip-path="url(#p10)"/><rect x="7" y="54" width="12" height="3" fill="#CE1126" clip-path="url(#p10)"/><rect x="111" y="48" width="12" height="3" fill="#006847" clip-path="url(#p10)"/><rect x="111" y="51" width="12" height="3" fill="white" clip-path="url(#p10)"/><rect x="111" y="54" width="12" height="3" fill="#CE1126" clip-path="url(#p10)"/><path d="M54,20 Q65,25 76,20 L65,38 Z" fill="#CE1126"/><path d="M54,20 L58,20 L65,34 L65,38 Z" fill="white"/><path d="M76,20 L72,20 L65,34 L65,38 Z" fill="#005B2F"/><ellipse cx="38" cy="55" rx="9" ry="10" fill="#C8A951"/><ellipse cx="38" cy="55" rx="7" ry="8" fill="#005B2F"/><path d="M34,52 Q38,48 42,52 L41,58 Q38,62 35,58 Z" fill="#C8A951"/><ellipse cx="38" cy="50" rx="3" ry="2.5" fill="#C8A951"/><line x1="30" y1="54" x2="34" y2="54" stroke="#C8A951" stroke-width="1.5"/><line x1="42" y1="54" x2="46" y2="54" stroke="#C8A951" stroke-width="1.5"/><text x="73" y="115" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="28" font-weight="900" fill="#001a0e" opacity="0.9">10</text><text x="72" y="114" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="28" font-weight="900" fill="#2d5a3d" opacity="0.7">10</text><text x="71" y="113" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="28" font-weight="900" fill="#5a8a6a" opacity="0.5">10</text><text x="70" y="112" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="28" font-weight="900" fill="#c8d8c8" opacity="0.9">10</text><rect x="18" y="124" width="94" height="17" rx="1" fill="#C8A951"/><text x="65" y="136.5" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="7.5" font-weight="900" fill="#004A26" letter-spacing="1.5">ALEJANDRA</text></svg></div>
+  <div style="flex:0 0 90px;width:90px"><svg viewBox="0 0 130 160" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="p11"><path d="M32,8 L6,34 L20,42 L20,148 L110,148 L110,42 L124,34 L98,8 L76,20 Q65,25 54,20Z"/></clipPath></defs><path d="M32,8 L6,34 L20,42 L20,148 L110,148 L110,42 L124,34 L98,8 L76,20 Q65,25 54,20Z" fill="#005B2F"/><path d="M32,8 L6,34 L20,42 L20,70 Q26,67 32,70 L32,34 Q32,20 32,8Z" fill="#004A26"/><path d="M98,8 L124,34 L110,42 L110,70 Q104,67 98,70 L98,34 Q98,20 98,8Z" fill="#004A26"/><rect x="7" y="48" width="12" height="3" fill="#006847" clip-path="url(#p11)"/><rect x="7" y="51" width="12" height="3" fill="white" clip-path="url(#p11)"/><rect x="7" y="54" width="12" height="3" fill="#CE1126" clip-path="url(#p11)"/><rect x="111" y="48" width="12" height="3" fill="#006847" clip-path="url(#p11)"/><rect x="111" y="51" width="12" height="3" fill="white" clip-path="url(#p11)"/><rect x="111" y="54" width="12" height="3" fill="#CE1126" clip-path="url(#p11)"/><path d="M54,20 Q65,25 76,20 L65,38 Z" fill="#CE1126"/><path d="M54,20 L58,20 L65,34 L65,38 Z" fill="white"/><path d="M76,20 L72,20 L65,34 L65,38 Z" fill="#005B2F"/><ellipse cx="38" cy="55" rx="9" ry="10" fill="#C8A951"/><ellipse cx="38" cy="55" rx="7" ry="8" fill="#005B2F"/><path d="M34,52 Q38,48 42,52 L41,58 Q38,62 35,58 Z" fill="#C8A951"/><ellipse cx="38" cy="50" rx="3" ry="2.5" fill="#C8A951"/><line x1="30" y1="54" x2="34" y2="54" stroke="#C8A951" stroke-width="1.5"/><line x1="42" y1="54" x2="46" y2="54" stroke="#C8A951" stroke-width="1.5"/><text x="73" y="115" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="28" font-weight="900" fill="#001a0e" opacity="0.9">11</text><text x="72" y="114" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="28" font-weight="900" fill="#2d5a3d" opacity="0.7">11</text><text x="71" y="113" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="28" font-weight="900" fill="#5a8a6a" opacity="0.5">11</text><text x="70" y="112" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="28" font-weight="900" fill="#c8d8c8" opacity="0.9">11</text><rect x="18" y="124" width="94" height="17" rx="1" fill="#C8A951"/><text x="65" y="136.5" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="7.5" font-weight="900" fill="#004A26" letter-spacing="1.5">MAURICIO</text></svg></div>
+  <div style="flex:0 0 90px;width:90px"><svg viewBox="0 0 130 160" xmlns="http://www.w3.org/2000/svg"><defs><clipPath id="p12"><path d="M32,8 L6,34 L20,42 L20,148 L110,148 L110,42 L124,34 L98,8 L76,20 Q65,25 54,20Z"/></clipPath></defs><path d="M32,8 L6,34 L20,42 L20,148 L110,148 L110,42 L124,34 L98,8 L76,20 Q65,25 54,20Z" fill="#005B2F"/><path d="M32,8 L6,34 L20,42 L20,70 Q26,67 32,70 L32,34 Q32,20 32,8Z" fill="#004A26"/><path d="M98,8 L124,34 L110,42 L110,70 Q104,67 98,70 L98,34 Q98,20 98,8Z" fill="#004A26"/><rect x="7" y="48" width="12" height="3" fill="#006847" clip-path="url(#p12)"/><rect x="7" y="51" width="12" height="3" fill="white" clip-path="url(#p12)"/><rect x="7" y="54" width="12" height="3" fill="#CE1126" clip-path="url(#p12)"/><rect x="111" y="48" width="12" height="3" fill="#006847" clip-path="url(#p12)"/><rect x="111" y="51" width="12" height="3" fill="white" clip-path="url(#p12)"/><rect x="111" y="54" width="12" height="3" fill="#CE1126" clip-path="url(#p12)"/><path d="M54,20 Q65,25 76,20 L65,38 Z" fill="#CE1126"/><path d="M54,20 L58,20 L65,34 L65,38 Z" fill="white"/><path d="M76,20 L72,20 L65,34 L65,38 Z" fill="#005B2F"/><ellipse cx="38" cy="55" rx="9" ry="10" fill="#C8A951"/><ellipse cx="38" cy="55" rx="7" ry="8" fill="#005B2F"/><path d="M34,52 Q38,48 42,52 L41,58 Q38,62 35,58 Z" fill="#C8A951"/><ellipse cx="38" cy="50" rx="3" ry="2.5" fill="#C8A951"/><line x1="30" y1="54" x2="34" y2="54" stroke="#C8A951" stroke-width="1.5"/><line x1="42" y1="54" x2="46" y2="54" stroke="#C8A951" stroke-width="1.5"/><text x="73" y="115" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="28" font-weight="900" fill="#001a0e" opacity="0.9">12</text><text x="72" y="114" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="28" font-weight="900" fill="#2d5a3d" opacity="0.7">12</text><text x="71" y="113" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="28" font-weight="900" fill="#5a8a6a" opacity="0.5">12</text><text x="70" y="112" text-anchor="middle" font-family="Impact,Arial Black,sans-serif" font-size="28" font-weight="900" fill="#c8d8c8" opacity="0.9">12</text><rect x="18" y="124" width="94" height="17" rx="1" fill="#C8A951"/><text x="65" y="136.5" text-anchor="middle" font-family="Arial Black,sans-serif" font-size="8.5" font-weight="900" fill="#004A26" letter-spacing="1.5">ALFONSO</text></svg></div>
+  </div>
+</div>
+
+<div class="hero">
+  <span class="balon">⚽</span>
+  <div class="badge">FIFA World Cup 2026</div>
+  <h1 class="titulo">Inauguración<br>Mundial 2026</h1>
+  <p class="subtitulo">Jueves 11 de junio · 11:00 AM · Ciudad de México</p>
+  <div class="banderas">🇲🇽 🇺🇸 🇨🇦</div>
+  <div class="grid">
+    <div class="bloque"><div class="num" id="dias">--</div><div class="lbl">Días</div></div>
+    <div class="bloque"><div class="num" id="horas">--</div><div class="lbl">Horas</div></div>
+    <div class="bloque"><div class="num" id="mins">--</div><div class="lbl">Minutos</div></div>
+    <div class="bloque"><div class="num" id="segs">--</div><div class="lbl">Segundos</div></div>
+  </div>
+  <p class="mensaje" id="mensaje">¡Faltan pocos días!</p>
+  <p class="fecha-txt">11 · 06 · 2026</p>
+</div>
+
+<div class="seccion">
+  <div class="card">
+    <div class="card-titulo">📍 Dónde vemos el partido</div>
+    <div style="text-align:center;font-size:18px;font-weight:700;color:#C8A951;letter-spacing:.06em;margin-bottom:.75rem">
+      <span style="display:inline-block;animation:spin 3s linear infinite">⚽</span>
+      &nbsp; El Nido Mundialista &nbsp;
+      <span style="display:inline-block;animation:spin 3s linear infinite">⚽</span>
+    </div>
+    <div class="dir-row"><span>🏠</span><div>Camino Real de Minas 11, Depto. 101<br><span style="color:rgba(255,255,255,.5);font-size:13px">Fam. Álvarez Chávez</span></div></div>
+    <div class="sep"></div>
+    <div class="inv-label">Invitados</div>
+    <div class="chips">
+      <span class="chip">Aarón</span><span class="chip">Tere</span><span class="chip">Karla</span>
+      <span class="chip">Armando</span><span class="chip">Pretty</span><span class="chip">Alina</span>
+      <span class="chip">Antonio</span><span class="chip">Fátima</span><span class="chip">Alex</span><span class="chip">Alejandra</span><span class="chip">Mauricio</span><span class="chip">Alfonso</span>
+    </div>
+    <div class="sep"></div>
+    <a href="quiniela.html" style="display:block;text-align:center;background:#C8A951;color:#0a0a0a;font-weight:700;font-size:13px;letter-spacing:.06em;padding:11px;border-radius:8px;text-decoration:none;margin-top:.25rem">⚽ Jugar la Quiniela Mundialista →</a>
+  </div>
+
+  <!-- FASE DE GRUPOS -->
+  <div class="fase-titulo">⚽ Fase de Grupos — 104 partidos</div>
+  <p style="font-size:11px;color:rgba(255,255,255,.3);text-align:center;margin-bottom:1rem">Horarios en CDMX · Partidos de México resaltados</p>
+
+  <div class="card">
+    <!-- JUE 11 JUN -->
+    <div class="dia-header">Jue 11 jun</div>
+    <div class="p-row mx"><span class="p-grupo">A</span><span class="p-teams">🇲🇽 México vs Sudáfrica 🇿🇦</span><span class="p-hora">13:00 — Azteca</span></div>
+    <div class="p-row"><span class="p-grupo">A</span><span class="p-teams">Corea del Sur vs Chequia</span><span class="p-hora">20:00 — Gdl</span></div>
+    <!-- VIE 12 JUN -->
+    <div class="dia-header">Vie 12 jun</div>
+    <div class="p-row"><span class="p-grupo">B</span><span class="p-teams">Canadá vs Bosnia & Herz.</span><span class="p-hora">13:00 — Toronto</span></div>
+    <div class="p-row"><span class="p-grupo">D</span><span class="p-teams">🇺🇸 USA vs Paraguay 🇵🇾</span><span class="p-hora">19:00 — LA</span></div>
+    <!-- SAB 13 JUN -->
+    <div class="dia-header">Sáb 13 jun</div>
+    <div class="p-row"><span class="p-grupo">B</span><span class="p-teams">Qatar vs Suiza</span><span class="p-hora">13:00 — SF</span></div>
+    <div class="p-row"><span class="p-grupo">C</span><span class="p-teams">🇧🇷 Brasil vs Marruecos 🇲🇦</span><span class="p-hora">16:00 — NY/NJ</span></div>
+    <div class="p-row"><span class="p-grupo">C</span><span class="p-teams">Haití vs Escocia</span><span class="p-hora">19:00 — Boston</span></div>
+    <div class="p-row"><span class="p-grupo">D</span><span class="p-teams">Australia vs Turquía</span><span class="p-hora">22:00 — Vancouver</span></div>
+    <!-- DOM 14 JUN -->
+    <div class="dia-header">Dom 14 jun</div>
+    <div class="p-row"><span class="p-grupo">E</span><span class="p-teams">Alemania vs Curazao</span><span class="p-hora">11:00 — Houston</span></div>
+    <div class="p-row"><span class="p-grupo">F</span><span class="p-teams">Países Bajos vs Japón</span><span class="p-hora">14:00 — Dallas</span></div>
+    <div class="p-row"><span class="p-grupo">E</span><span class="p-teams">Costa de Marfil vs Ecuador</span><span class="p-hora">17:00 — Filadelfia</span></div>
+    <div class="p-row"><span class="p-grupo">F</span><span class="p-teams">Suecia vs Túnez</span><span class="p-hora">20:00 — Monterrey</span></div>
+    <!-- LUN 15 JUN -->
+    <div class="dia-header">Lun 15 jun</div>
+    <div class="p-row"><span class="p-grupo">H</span><span class="p-teams">🇪🇸 España vs Cabo Verde</span><span class="p-hora">10:00 — Atlanta</span></div>
+    <div class="p-row"><span class="p-grupo">G</span><span class="p-teams">Bélgica vs Egipto</span><span class="p-hora">13:00 — Seattle</span></div>
+    <div class="p-row"><span class="p-grupo">H</span><span class="p-teams">Arabia Saudita vs Uruguay</span><span class="p-hora">16:00 — Miami</span></div>
+    <div class="p-row"><span class="p-grupo">G</span><span class="p-teams">Irán vs Nueva Zelanda</span><span class="p-hora">19:00 — LA</span></div>
+    <!-- MAR 16 JUN -->
+    <div class="dia-header">Mar 16 jun</div>
+    <div class="p-row"><span class="p-grupo">I</span><span class="p-teams">🇫🇷 Francia vs Senegal 🇸🇳</span><span class="p-hora">13:00 — NY/NJ</span></div>
+    <div class="p-row"><span class="p-grupo">I</span><span class="p-teams">Irak vs Noruega</span><span class="p-hora">16:00 — Boston</span></div>
+    <div class="p-row"><span class="p-grupo">J</span><span class="p-teams">🇦🇷 Argentina vs Argelia</span><span class="p-hora">19:00 — KC</span></div>
+    <div class="p-row"><span class="p-grupo">J</span><span class="p-teams">Austria vs Jordania</span><span class="p-hora">22:00 — SF</span></div>
+    <!-- MIE 17 JUN -->
+    <div class="dia-header">Mié 17 jun</div>
+    <div class="p-row"><span class="p-grupo">K</span><span class="p-teams">🇵🇹 Portugal vs RD Congo</span><span class="p-hora">11:00 — Houston</span></div>
+    <div class="p-row"><span class="p-grupo">L</span><span class="p-teams">🏴󠁧󠁢󠁥󠁮󠁧󠁿 Inglaterra vs Croacia 🇭🇷</span><span class="p-hora">14:00 — Dallas</span></div>
+    <div class="p-row"><span class="p-grupo">L</span><span class="p-teams">Ghana vs Panamá</span><span class="p-hora">17:00 — Toronto</span></div>
+    <div class="p-row"><span class="p-grupo">K</span><span class="p-teams">Uzbekistán vs Colombia 🇨🇴</span><span class="p-hora">20:00 — Azteca</span></div>
+    <!-- JUE 18 JUN -->
+    <div class="dia-header">Jue 18 jun</div>
+    <div class="p-row"><span class="p-grupo">A</span><span class="p-teams">Chequia vs Sudáfrica</span><span class="p-hora">10:00 — Atlanta</span></div>
+    <div class="p-row"><span class="p-grupo">B</span><span class="p-teams">Suiza vs Bosnia & Herz.</span><span class="p-hora">13:00 — LA</span></div>
+    <div class="p-row"><span class="p-grupo">B</span><span class="p-teams">Canadá vs Qatar</span><span class="p-hora">16:00 — Vancouver</span></div>
+    <div class="p-row mx"><span class="p-grupo">A</span><span class="p-teams">🇲🇽 México vs Corea del Sur</span><span class="p-hora">19:00 — Gdl</span></div>
+    <!-- VIE 19 JUN -->
+    <div class="dia-header">Vie 19 jun</div>
+    <div class="p-row"><span class="p-grupo">D</span><span class="p-teams">USA vs Australia</span><span class="p-hora">13:00 — Seattle</span></div>
+    <div class="p-row"><span class="p-grupo">C</span><span class="p-teams">Escocia vs Marruecos</span><span class="p-hora">16:00 — Boston</span></div>
+    <div class="p-row"><span class="p-grupo">C</span><span class="p-teams">Brasil vs Haití</span><span class="p-hora">19:00 — Filadelfia</span></div>
+    <div class="p-row"><span class="p-grupo">D</span><span class="p-teams">Turquía vs Paraguay</span><span class="p-hora">22:00 — SF</span></div>
+    <!-- SAB 20 JUN -->
+    <div class="dia-header">Sáb 20 jun</div>
+    <div class="p-row"><span class="p-grupo">F</span><span class="p-teams">Países Bajos vs Suecia</span><span class="p-hora">11:00 — Houston</span></div>
+    <div class="p-row"><span class="p-grupo">E</span><span class="p-teams">Alemania vs Costa de Marfil</span><span class="p-hora">14:00 — Toronto</span></div>
+    <div class="p-row"><span class="p-grupo">E</span><span class="p-teams">Ecuador vs Curazao</span><span class="p-hora">18:00 — KC</span></div>
+    <div class="p-row"><span class="p-grupo">F</span><span class="p-teams">Túnez vs Japón</span><span class="p-hora">22:00 — Monterrey</span></div>
+    <!-- DOM 21 JUN -->
+    <div class="dia-header">Dom 21 jun</div>
+    <div class="p-row"><span class="p-grupo">H</span><span class="p-teams">España vs Arabia Saudita</span><span class="p-hora">10:00 — Atlanta</span></div>
+    <div class="p-row"><span class="p-grupo">G</span><span class="p-teams">Bélgica vs Irán</span><span class="p-hora">13:00 — LA</span></div>
+    <div class="p-row"><span class="p-grupo">H</span><span class="p-teams">Uruguay vs Cabo Verde</span><span class="p-hora">16:00 — Miami</span></div>
+    <div class="p-row"><span class="p-grupo">G</span><span class="p-teams">Nueva Zelanda vs Egipto</span><span class="p-hora">19:00 — Vancouver</span></div>
+    <!-- LUN 22 JUN -->
+    <div class="dia-header">Lun 22 jun</div>
+    <div class="p-row"><span class="p-grupo">J</span><span class="p-teams">Argentina vs Austria</span><span class="p-hora">11:00 — Dallas</span></div>
+    <div class="p-row"><span class="p-grupo">I</span><span class="p-teams">Francia vs Irak</span><span class="p-hora">15:00 — Filadelfia</span></div>
+    <div class="p-row"><span class="p-grupo">I</span><span class="p-teams">Noruega vs Senegal</span><span class="p-hora">18:00 — NY/NJ</span></div>
+    <div class="p-row"><span class="p-grupo">J</span><span class="p-teams">Jordania vs Argelia</span><span class="p-hora">21:00 — SF</span></div>
+    <!-- MAR 23 JUN -->
+    <div class="dia-header">Mar 23 jun</div>
+    <div class="p-row"><span class="p-grupo">K</span><span class="p-teams">Portugal vs Uzbekistán</span><span class="p-hora">11:00 — Houston</span></div>
+    <div class="p-row"><span class="p-grupo">L</span><span class="p-teams">Inglaterra vs Ghana</span><span class="p-hora">14:00 — Boston</span></div>
+    <div class="p-row"><span class="p-grupo">L</span><span class="p-teams">Panamá vs Croacia</span><span class="p-hora">17:00 — Toronto</span></div>
+    <div class="p-row"><span class="p-grupo">K</span><span class="p-teams">Colombia vs RD Congo</span><span class="p-hora">20:00 — Guadalajara</span></div>
+    <!-- MIE 24 JUN -->
+    <div class="dia-header">Mié 24 jun</div>
+    <div class="p-row"><span class="p-grupo">B</span><span class="p-teams">Suiza vs Canadá</span><span class="p-hora">13:00 — Vancouver</span></div>
+    <div class="p-row"><span class="p-grupo">B</span><span class="p-teams">Bosnia & Herz. vs Qatar</span><span class="p-hora">13:00 — Seattle</span></div>
+    <div class="p-row"><span class="p-grupo">C</span><span class="p-teams">Escocia vs Brasil</span><span class="p-hora">16:00 — Miami</span></div>
+    <div class="p-row"><span class="p-grupo">C</span><span class="p-teams">Marruecos vs Haití</span><span class="p-hora">16:00 — Atlanta</span></div>
+    <div class="p-row mx"><span class="p-grupo">A</span><span class="p-teams">Chequia vs 🇲🇽 México</span><span class="p-hora">19:00 — Azteca</span></div>
+    <div class="p-row"><span class="p-grupo">A</span><span class="p-teams">Sudáfrica vs Corea del Sur</span><span class="p-hora">19:00 — Monterrey</span></div>
+    <!-- JUE 25 JUN -->
+    <div class="dia-header">Jue 25 jun</div>
+    <div class="p-row"><span class="p-grupo">E</span><span class="p-teams">Curazao vs Costa de Marfil</span><span class="p-hora">14:00 — Filadelfia</span></div>
+    <div class="p-row"><span class="p-grupo">E</span><span class="p-teams">Ecuador vs Alemania</span><span class="p-hora">14:00 — NY/NJ</span></div>
+    <div class="p-row"><span class="p-grupo">F</span><span class="p-teams">Japón vs Suecia</span><span class="p-hora">17:00 — Dallas</span></div>
+    <div class="p-row"><span class="p-grupo">F</span><span class="p-teams">Túnez vs Países Bajos</span><span class="p-hora">17:00 — KC</span></div>
+    <div class="p-row"><span class="p-grupo">D</span><span class="p-teams">Turquía vs USA</span><span class="p-hora">20:00 — LA</span></div>
+    <div class="p-row"><span class="p-grupo">D</span><span class="p-teams">Paraguay vs Australia</span><span class="p-hora">20:00 — SF</span></div>
+    <!-- VIE 26 JUN -->
+    <div class="dia-header">Vie 26 jun</div>
+    <div class="p-row"><span class="p-grupo">I</span><span class="p-teams">Noruega vs Francia</span><span class="p-hora">13:00 — Boston</span></div>
+    <div class="p-row"><span class="p-grupo">I</span><span class="p-teams">Senegal vs Irak</span><span class="p-hora">13:00 — Toronto</span></div>
+    <div class="p-row"><span class="p-grupo">H</span><span class="p-teams">Cabo Verde vs Arabia Saudita</span><span class="p-hora">18:00 — Houston</span></div>
+    <div class="p-row"><span class="p-grupo">H</span><span class="p-teams">Uruguay vs España</span><span class="p-hora">18:00 — Guadalajara</span></div>
+    <div class="p-row"><span class="p-grupo">G</span><span class="p-teams">Egipto vs Irán</span><span class="p-hora">21:00 — Seattle</span></div>
+    <div class="p-row"><span class="p-grupo">G</span><span class="p-teams">Nueva Zelanda vs Bélgica</span><span class="p-hora">21:00 — Vancouver</span></div>
+    <!-- SAB 27 JUN -->
+    <div class="dia-header">Sáb 27 jun</div>
+    <div class="p-row"><span class="p-grupo">L</span><span class="p-teams">Panamá vs Inglaterra</span><span class="p-hora">15:00 — NY/NJ</span></div>
+    <div class="p-row"><span class="p-grupo">L</span><span class="p-teams">Croacia vs Ghana</span><span class="p-hora">15:00 — Filadelfia</span></div>
+    <div class="p-row"><span class="p-grupo">K</span><span class="p-teams">Colombia vs Portugal</span><span class="p-hora">17:30 — Miami</span></div>
+    <div class="p-row"><span class="p-grupo">K</span><span class="p-teams">RD Congo vs Uzbekistán</span><span class="p-hora">17:30 — Atlanta</span></div>
+    <div class="p-row"><span class="p-grupo">J</span><span class="p-teams">Argelia vs Austria</span><span class="p-hora">20:00 — KC</span></div>
+    <div class="p-row"><span class="p-grupo">J</span><span class="p-teams">Jordania vs Argentina</span><span class="p-hora">20:00 — Dallas</span></div>
+  </div>
+
+  <!-- DIECISEISAVOS -->
+  <div class="fase-titulo">🔵 Dieciseisavos de Final (28 jun – 3 jul)</div>
+  <div class="card">
+    <div class="dia-header">Dom 28 jun</div>
+    <div class="p-row"><span class="p-grupo">R32</span><span class="p-teams">2°A vs 2°B</span><span class="p-hora">13:00 — LA</span></div>
+    <div class="dia-header">Lun 29 jun</div>
+    <div class="p-row"><span class="p-grupo">R32</span><span class="p-teams">1°C vs 2°F</span><span class="p-hora">11:00 — Houston</span></div>
+    <div class="p-row"><span class="p-grupo">R32</span><span class="p-teams">1°E vs Mejor 3°</span><span class="p-hora">14:30 — Boston</span></div>
+    <div class="p-row"><span class="p-grupo">R32</span><span class="p-teams">1°F vs 2°C</span><span class="p-hora">19:00 — Monterrey</span></div>
+    <div class="dia-header">Mar 30 jun</div>
+    <div class="p-row"><span class="p-grupo">R32</span><span class="p-teams">2°E vs 2°I</span><span class="p-hora">11:00 — Dallas</span></div>
+    <div class="p-row"><span class="p-grupo">R32</span><span class="p-teams">1°I vs Mejor 3°</span><span class="p-hora">15:00 — NY/NJ</span></div>
+    <div class="p-row mx"><span class="p-grupo">R32</span><span class="p-teams">1°A vs Mejor 3° — posible 🇲🇽</span><span class="p-hora">19:00 — Azteca</span></div>
+    <div class="dia-header">Mié 1 jul</div>
+    <div class="p-row"><span class="p-grupo">R32</span><span class="p-teams">1°L vs Mejor 3°</span><span class="p-hora">10:00 — Atlanta</span></div>
+    <div class="p-row"><span class="p-grupo">R32</span><span class="p-teams">1°G vs Mejor 3°</span><span class="p-hora">14:00 — Seattle</span></div>
+    <div class="p-row"><span class="p-grupo">R32</span><span class="p-teams">1°D vs Mejor 3°</span><span class="p-hora">18:00 — SF</span></div>
+    <div class="dia-header">Jue 2 jul</div>
+    <div class="p-row"><span class="p-grupo">R32</span><span class="p-teams">1°H vs 2°J</span><span class="p-hora">13:00 — LA</span></div>
+    <div class="p-row"><span class="p-grupo">R32</span><span class="p-teams">2°K vs 2°L</span><span class="p-hora">17:00 — Toronto</span></div>
+    <div class="p-row"><span class="p-grupo">R32</span><span class="p-teams">1°B vs Mejor 3°</span><span class="p-hora">19:00 — Vancouver</span></div>
+    <div class="dia-header">Vie 3 jul</div>
+    <div class="p-row"><span class="p-grupo">R32</span><span class="p-teams">2°D vs 2°G</span><span class="p-hora">12:00 — Dallas</span></div>
+    <div class="p-row"><span class="p-grupo">R32</span><span class="p-teams">1°J vs 2°H</span><span class="p-hora">16:00 — Miami</span></div>
+    <div class="p-row"><span class="p-grupo">R32</span><span class="p-teams">1°K vs Mejor 3°</span><span class="p-hora">19:30 — KC</span></div>
+  </div>
+
+  <!-- OCTAVOS -->
+  <div class="fase-titulo">🟡 Octavos de Final (4–7 jul)</div>
+  <div class="card">
+    <div class="dia-header">Sáb 4 jul</div>
+    <div class="p-row"><span class="p-grupo">R16</span><span class="p-teams">Octavo 1</span><span class="p-hora">11:00 — Houston</span></div>
+    <div class="p-row"><span class="p-grupo">R16</span><span class="p-teams">Octavo 2</span><span class="p-hora">15:00 — Filadelfia</span></div>
+    <div class="dia-header">Dom 5 jul</div>
+    <div class="p-row"><span class="p-grupo">R16</span><span class="p-teams">Octavo 3</span><span class="p-hora">14:00 — NY/NJ</span></div>
+    <div class="p-row mx"><span class="p-grupo">R16</span><span class="p-teams">Octavo 4 — posible 🇲🇽</span><span class="p-hora">18:00 — Azteca</span></div>
+    <div class="dia-header">Lun 6 jul</div>
+    <div class="p-row"><span class="p-grupo">R16</span><span class="p-teams">Octavo 5</span><span class="p-hora">13:00 — Dallas</span></div>
+    <div class="p-row"><span class="p-grupo">R16</span><span class="p-teams">Octavo 6</span><span class="p-hora">18:00 — Seattle</span></div>
+    <div class="dia-header">Mar 7 jul</div>
+    <div class="p-row"><span class="p-grupo">R16</span><span class="p-teams">Octavo 7</span><span class="p-hora">10:00 — Atlanta</span></div>
+    <div class="p-row"><span class="p-grupo">R16</span><span class="p-teams">Octavo 8</span><span class="p-hora">14:00 — Vancouver</span></div>
+  </div>
+
+  <!-- CUARTOS -->
+  <div class="fase-titulo">🟠 Cuartos de Final (9–11 jul)</div>
+  <div class="card">
+    <div class="dia-header">Jue 9 jul</div>
+    <div class="p-row"><span class="p-grupo">QF</span><span class="p-teams">Cuarto 1</span><span class="p-hora">14:00 — Boston</span></div>
+    <div class="dia-header">Vie 10 jul</div>
+    <div class="p-row"><span class="p-grupo">QF</span><span class="p-teams">Cuarto 2</span><span class="p-hora">13:00 — LA</span></div>
+    <div class="dia-header">Sáb 11 jul</div>
+    <div class="p-row"><span class="p-grupo">QF</span><span class="p-teams">Cuarto 3</span><span class="p-hora">15:00 — Miami</span></div>
+    <div class="p-row"><span class="p-grupo">QF</span><span class="p-teams">Cuarto 4</span><span class="p-hora">19:00 — KC</span></div>
+  </div>
+
+  <!-- SEMIS -->
+  <div class="fase-titulo">🔴 Semifinales (14–15 jul)</div>
+  <div class="card">
+    <div class="dia-header">Mar 14 jul</div>
+    <div class="p-row"><span class="p-grupo">SF</span><span class="p-teams">Semifinal 1</span><span class="p-hora">13:00 — Dallas</span></div>
+    <div class="dia-header">Mié 15 jul</div>
+    <div class="p-row"><span class="p-grupo">SF</span><span class="p-teams">Semifinal 2</span><span class="p-hora">13:00 — Atlanta</span></div>
+  </div>
+
+  <!-- 3ER LUGAR Y FINAL -->
+  <div class="fase-titulo">🏆 Tercer lugar y Final</div>
+  <div class="card">
+    <div class="dia-header">Sáb 18 jul</div>
+    <div class="p-row"><span class="p-grupo">3°</span><span class="p-teams">Tercer lugar</span><span class="p-hora">15:00 — Miami</span></div>
+    <div class="dia-header">Dom 19 jul</div>
+    <div class="p-row mx"><span class="p-grupo">🏆</span><span class="p-teams">Gran Final</span><span class="p-hora">13:00 — NY/NJ</span></div>
+  </div>
+
+  <p class="footer-txt">Horarios en CDMX · FIFA World Cup 2026 · 104 partidos</p>
+</div>
+</div>
+
+<script>
+const target=new Date('2026-06-11T11:00:00-06:00').getTime();
+function pad(n){return String(n).padStart(2,'0')}
+function tick(){
+  const diff=target-Date.now();
+  if(diff<=0){['dias','horas','mins','segs'].forEach(id=>document.getElementById(id).textContent='00');document.getElementById('mensaje').textContent='¡Arrancó el Mundial! 🎉';return}
+  document.getElementById('dias').textContent=pad(Math.floor(diff/86400000));
+  document.getElementById('horas').textContent=pad(Math.floor((diff%86400000)/3600000));
+  document.getElementById('mins').textContent=pad(Math.floor((diff%3600000)/60000));
+  document.getElementById('segs').textContent=pad(Math.floor((diff%60000)/1000));
+  const d=Math.floor(diff/86400000);
+  const msg=document.getElementById('mensaje');
+  if(d===0)msg.textContent='¡Hoy es el día! 🔥';
+  else if(d===1)msg.textContent='¡Mañana arranca! 🔥';
+  else msg.textContent='¡Faltan '+d+' días!';
+}
+tick();setInterval(tick,1000);
+</script>
+
+<div style="text-align:center;padding:1.5rem 1rem 2rem;font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;color:rgba(255,255,255,.2);letter-spacing:.08em">Project developed by <span style="color:rgba(200,169,81,.6);font-weight:500">Antonio Salazar</span></div>
+</body>
+</html>
