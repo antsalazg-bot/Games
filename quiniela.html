@@ -279,19 +279,29 @@ function salir(){
 async function iniciarApp(){
   document.getElementById('appSection').style.display='block';
   document.getElementById('famLabel').textContent='🏠 '+familia;
-  await cargarDatos();
+  // Render picks immediately without waiting for API
   renderPicks();
   renderTabla();
   renderResultados();
+  // Then load data in background and re-render
+  cargarDatos().then(()=>{
+    renderPicks();
+    renderTabla();
+    renderResultados();
+  });
 }
 
 async function cargarDatos(){
   try{
-    const r=await fetch(API+'?action=getAll');
+    const url=API+'?action=getAll&t='+Date.now();
+    const r=await fetch(url, {redirect:'follow'});
     const d=await r.json();
-    allData=d;
+    allData=d||{familias:{},resultados:{}};
     if(d.familias&&d.familias[familia]){picks=d.familias[familia].picks||{};}
-  }catch(e){console.log('API error',e);}
+  }catch(e){
+    console.log('API error',e);
+    allData={familias:{},resultados:{}};
+  }
 }
 
 // ── TABS ─────────────────────────────────────────────────────
@@ -362,7 +372,7 @@ async function guardarTodo(){
     if(!lEl||lEl.disabled) return null;
     const l=lEl.value,v=vEl.value;
     if(l===''&&v==='') return null;
-    return fetch(API+'?action=x',{method:'POST',body:JSON.stringify({action:'savePick',familia,partidoId:p.id,local:l,visitante:v})}).catch(()=>null);
+    return fetch(API,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'savePick',familia,partidoId:p.id,local:l,visitante:v})}).catch(()=>null);
   }).filter(Boolean);
   const sel=document.getElementById('sel_c');
   if(sel&&sel.value) localStorage.setItem('pred_c_'+familia,sel.value);
@@ -422,7 +432,7 @@ async function saveRes(id){
   const l=document.getElementById('rl_'+id).value;
   const v=document.getElementById('rv_'+id).value;
   if(l===''||v==='') return;
-  await fetch(API+'?action=x',{method:'POST',body:JSON.stringify({action:'saveResult',partidoId:id,local:l,visitante:v})}).catch(()=>null);
+  await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'saveResult',partidoId:id,local:l,visitante:v})}).catch(()=>null);
   await cargarDatos();
   renderPicks();renderTabla();renderResultados();
   showToast('Resultado guardado ✓');
