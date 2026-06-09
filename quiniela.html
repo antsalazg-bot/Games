@@ -345,11 +345,11 @@ function renderPicks(){
         </div>
         <div class="pinputs">
           <div style="flex:1;display:flex;justify-content:flex-start">
-            <input type="number" class="sinput" id="l_${p.id}" min="0" max="20" value="${pred.predLocal??''}" placeholder="0"${res?' disabled':''}>
+            <input type="number" class="sinput" id="l_${p.id}" min="0" max="20" value="${pred.predLocal??''}" placeholder="0" value=""${res?' disabled':''}>
           </div>
           <span class="ssep">—</span>
           <div style="flex:1;display:flex;justify-content:flex-end">
-            <input type="number" class="sinput" id="v_${p.id}" min="0" max="20" value="${pred.predVisitante??''}" placeholder="0"${res?' disabled':''}>
+            <input type="number" class="sinput" id="v_${p.id}" min="0" max="20" value="${pred.predVisitante??''}" placeholder="0" value=""${res?' disabled':''}>
           </div>
           ${badge}
         </div>
@@ -380,7 +380,9 @@ async function guardarTodo(){
     if(!lEl||lEl.disabled) return null;
     const l=lEl.value,v=vEl.value;
     if(l===''&&v==='') return null;
-    return fetch(API,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'savePick',familia,partidoId:p.id,local:l,visitante:v})}).catch(()=>null);
+    const lVal = l==='' ? '0' : l;
+    const vVal = v==='' ? '0' : v;
+    return fetch(API,{method:'POST',headers:{'Content-Type':'text/plain'},body:JSON.stringify({action:'savePick',familia,partidoId:p.id,local:lVal,visitante:vVal})}).catch(()=>null);
   }).filter(Boolean);
   const sel=document.getElementById('sel_c');
   if(sel&&sel.value) localStorage.setItem('pred_c_'+familia,sel.value);
@@ -425,9 +427,9 @@ function renderResultados(){
         <div class="pmeta"><span>${p.fecha}</span><span>${p.sede}</span></div>
         <div class="pteams"><span class="pteam">${p.local}</span><span class="pvs">vs</span><span class="pteam r">${p.visit}</span></div>
         <div class="pinputs">
-          <input type="number" class="sinput" id="rl_${p.id}" min="0" max="20" value="${res.local??''}" placeholder="0">
+          <input type="number" class="sinput" id="rl_${p.id}" min="0" max="20" value="${res.local??''}" placeholder="0" value="">
           <span class="ssep">—</span>
-          <input type="number" class="sinput" id="rv_${p.id}" min="0" max="20" value="${res.visitante??''}" placeholder="0">
+          <input type="number" class="sinput" id="rv_${p.id}" min="0" max="20" value="${res.visitante??''}" placeholder="0" value="">
           <button onclick="saveRes('${p.id}')" style="margin-left:6px;background:#333;color:#fff;border:none;border-radius:6px;padding:6px 12px;font-size:11px;cursor:pointer;font-family:inherit">Guardar</button>
         </div>
       </div>`;
