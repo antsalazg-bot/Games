@@ -32,15 +32,15 @@ input::placeholder{color:rgba(255,255,255,.3)}
 .pcard{background:#161616;border:.5px solid #2a2a2a;border-radius:10px;padding:.85rem 1rem;margin-bottom:8px}
 .pcard.mx{border-color:rgba(200,169,81,.4);background:rgba(200,169,81,.05)}
 .pmeta{display:flex;justify-content:space-between;font-size:10px;color:rgba(255,255,255,.3);margin-bottom:.5rem}
-.pteams{display:flex;align-items:center;gap:8px;margin-bottom:.6rem}
+.pteams{display:flex;align-items:flex-start;gap:8px;margin-bottom:0}
 .pteam{flex:1;font-size:13px;font-weight:500}
 .pteam.r{text-align:right}
-.pvs{font-size:11px;color:rgba(255,255,255,.3);flex-shrink:0}
-.pinputs{display:flex;align-items:center;gap:6px}
+.pvs{font-size:11px;color:rgba(255,255,255,.3);flex-shrink:0;padding-top:2px}
+.pinputs{display:flex;align-items:center;gap:6px;margin-top:.5rem}
 .sinput{width:44px;background:#0a0a0a;border:.5px solid #333;border-radius:6px;padding:7px 4px;color:#fff;font-size:18px;font-weight:700;text-align:center;outline:none;margin-bottom:0}
 .sinput:focus{border-color:#C8A951}
 .sinput:disabled{opacity:.4}
-.ssep{font-size:16px;color:rgba(255,255,255,.3)}
+.ssep{font-size:16px;color:rgba(255,255,255,.3);flex:1;text-align:center}
 .presult{font-size:11px;color:#4ade80;margin-top:.4rem}
 .pbadge{margin-left:auto;font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
 .p3{background:rgba(74,222,128,.15);color:#4ade80}
@@ -338,11 +338,19 @@ function renderPicks(){
       const badge=pts!==null?`<span class="pbadge p${pts}">${pts===3?'3pts ✓':pts===1?'1pt ~':'0pts ✗'}</span>`:'';
       html+=`<div class="pcard${p.mx?' mx':''}">
         <div class="pmeta"><span>${p.g!=='A'&&p.g!=='B'&&p.g!=='C'&&p.g!=='D'&&p.g!=='E'&&p.g!=='F'&&p.g!=='G'&&p.g!=='H'&&p.g!=='I'&&p.g!=='J'&&p.g!=='K'&&p.g!=='L'?'':'Grupo '+p.g+' · '}${p.fecha}</span><span>${p.sede}</span></div>
-        <div class="pteams"><span class="pteam">${p.mx&&p.local==='México'?'🇲🇽 ':''}${p.local}</span><span class="pvs">vs</span><span class="pteam r">${p.mx&&p.visit==='México'?'🇲🇽 ':''}${p.visit}</span></div>
+        <div class="pteams">
+          <span class="pteam">${p.mx&&p.local==='México'?'🇲🇽 ':''}${p.local}</span>
+          <span class="pvs">vs</span>
+          <span class="pteam r">${p.mx&&p.visit==='México'?'🇲🇽 ':''}${p.visit}</span>
+        </div>
         <div class="pinputs">
-          <input type="number" class="sinput" id="l_${p.id}" min="0" max="20" value="${pred.predLocal??''}" placeholder="0"${res?' disabled':''}>
+          <div style="flex:1;display:flex;justify-content:flex-start">
+            <input type="number" class="sinput" id="l_${p.id}" min="0" max="20" value="${pred.predLocal??''}" placeholder="0"${res?' disabled':''}>
+          </div>
           <span class="ssep">—</span>
-          <input type="number" class="sinput" id="v_${p.id}" min="0" max="20" value="${pred.predVisitante??''}" placeholder="0"${res?' disabled':''}>
+          <div style="flex:1;display:flex;justify-content:flex-end">
+            <input type="number" class="sinput" id="v_${p.id}" min="0" max="20" value="${pred.predVisitante??''}" placeholder="0"${res?' disabled':''}>
+          </div>
           ${badge}
         </div>
         ${res?`<div class="presult">Resultado: ${res.local} - ${res.visitante}</div>`:''}
@@ -444,5 +452,7 @@ function showToast(msg){
   setTimeout(()=>t.classList.remove('show'),2500);
 }
 </script>
+
+<div style="text-align:center;padding:1.5rem 1rem 2rem;font-family:'Helvetica Neue',Arial,sans-serif;font-size:11px;color:rgba(255,255,255,.2);letter-spacing:.08em">Project developed by <span style="color:rgba(200,169,81,.6);font-weight:500">Antonio Salazar</span></div>
 </body>
 </html>
