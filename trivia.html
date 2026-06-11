@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trivia Familia</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, sans-serif; background: #f5f5f0; color: #1a1a1a; min-height: 100vh; display: flex; justify-content: center; padding: 2rem 1rem; }
+.wrap { width: 100%; max-width: 640px; }
+h1 { font-size: 22px; font-weight: 500; margin-bottom: 1.5rem; text-align: center; color: #1a1a1a; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 12px; }
+.scores { display: flex; gap: 12px; }
+.score-card { background: #fff; border: 1px solid #e0e0d8; border-radius: 10px; padding: 10px 16px; text-align: center; min-width: 100px; }
+.score-card .name { font-size: 12px; color: #888; margin-bottom: 4px; }
+.score-card .pts { font-size: 22px; font-weight: 500; }
+.score-card.active { border: 2px solid #378add; }
+.turn-badge { font-size: 13px; color: #666; background: #fff; border: 1px solid #e0e0d8; border-radius: 10px; padding: 8px 14px; }
+.turn-badge span { font-weight: 500; color: #1a1a1a; }
+.progress { font-size: 13px; color: #aaa; margin-bottom: 1rem; }
+.question-card { background: #fff; border: 1px solid #e0e0d8; border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
+.category { font-size: 11px; font-weight: 500; color: #378add; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+.question-text { font-size: 16px; font-weight: 500; line-height: 1.5; }
+.options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 1rem; }
+.opt-btn { background: #f5f5f0; border: 1px solid #d8d8d0; border-radius: 8px; padding: 12px 14px; font-size: 14px; cursor: pointer; text-align: left; color: #1a1a1a; transition: background 0.15s; line-height: 1.4; font-family: inherit; }
+.opt-btn:hover:not(:disabled) { background: #eaeae4; }
+.opt-btn.correct { background: #eaf3de; border-color: #639922; color: #3b6d11; }
+.opt-btn.wrong { background: #fcebeb; border-color: #e24b4a; color: #a32d2d; }
+.opt-btn.reveal { background: #eaf3de; border-color: #639922; color: #3b6d11; }
+.opt-btn:disabled { cursor: default; }
+.feedback { font-size: 14px; margin-top: 12px; min-height: 20px; color: #666; }
+.next-btn { margin-top: 1rem; width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #d8d8d0; background: #fff; font-size: 15px; font-weight: 500; cursor: pointer; color: #1a1a1a; font-family: inherit; }
+.next-btn:hover { background: #f5f5f0; }
+.results { text-align: center; padding: 2rem 0; }
+.results h2 { font-size: 22px; font-weight: 500; margin-bottom: 1.5rem; }
+.result-cards { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.result-card { background: #fff; border: 1px solid #e0e0d8; border-radius: 12px; padding: 1.5rem 2rem; min-width: 140px; }
+.result-card .rname { font-size: 14px; color: #888; margin-bottom: 6px; }
+.result-card .rscore { font-size: 36px; font-weight: 500; }
+.result-card.winner { border: 2px solid #639922; }
+.winner-label { font-size: 18px; font-weight: 500; color: #3b6d11; margin-bottom: 1rem; }
+.restart-btn { padding: 12px 32px; border-radius: 8px; border: 1px solid #d8d8d0; background: #fff; font-size: 15px; cursor: pointer; color: #1a1a1a; font-family: inherit; }
+.restart-btn:hover { background: #f5f5f0; }
+@media (max-width: 480px) { .options { grid-template-columns: 1fr; } .scores { flex: 1; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Trivia Familia 🎯</h1>
+  <div id="game-area"></div>
+</div>
+<script>
+const questions = [
+  { cat: "Geografía", q: "¿Cuál es el río más largo del mundo?", opts: ["Amazonas", "Nilo", "Yangtsé", "Misisipi"], ans: 1 },
+  { cat: "Ciencia", q: "¿Cuántos huesos tiene el cuerpo humano adulto?", opts: ["186", "206", "216", "196"], ans: 1 },
+  { cat: "Historia", q: "¿En qué año cayó el Muro de Berlín?", opts: ["1987", "1991", "1989", "1985"], ans: 2 },
+  { cat: "Arte y cultura", q: "¿Quién pintó la Capilla Sixtina?", opts: ["Da Vinci", "Rafael", "Botticelli", "Miguel Ángel"], ans: 3 },
+  { cat: "Ciencia", q: "¿Qué planeta es conocido como el planeta rojo?", opts: ["Júpiter", "Venus", "Marte", "Saturno"], ans: 2 },
+  { cat: "Literatura", q: "¿Quién escribió Cien años de soledad?", opts: ["Borges", "Vargas Llosa", "García Márquez", "Fuentes"], ans: 2 },
+  { cat: "Geografía", q: "¿Cuál es el país más grande del mundo por superficie?", opts: ["China", "Canadá", "EUA", "Rusia"], ans: 3 },
+  { cat: "Historia", q: "¿En qué año llegó el hombre a la Luna por primera vez?", opts: ["1965", "1969", "1972", "1967"], ans: 1 },
+  { cat: "Ciencia", q: "¿Cuál es el elemento químico con símbolo Au?", opts: ["Plata", "Aluminio", "Oro", "Cobre"], ans: 2 },
+  { cat: "Deporte", q: "¿En qué país se inventó el fútbol moderno?", opts: ["España", "Brasil", "Francia", "Inglaterra"], ans: 3 },
+  { cat: "Geografía", q: "¿Cuál es la montaña más alta del mundo?", opts: ["K2", "Everest", "Aconcagua", "Kilimanjaro"], ans: 1 },
+  { cat: "Arte y cultura", q: "¿En qué ciudad se encuentra el Museo del Louvre?", opts: ["Roma", "Madrid", "París", "Londres"], ans: 2 },
+  { cat: "Ciencia", q: "¿Cuántos colores tiene el arcoíris?", opts: ["5", "6", "8", "7"], ans: 3 },
+  { cat: "Historia", q: "¿Quién fue el primer presidente de México?", opts: ["Juárez", "Hidalgo", "Guadalupe Victoria", "Morelos"], ans: 2 },
+  { cat: "Literatura", q: "¿De qué país es originario el personaje Don Quijote?", opts: ["Portugal", "España", "Italia", "Francia"], ans: 1 },
+  { cat: "Deporte", q: "¿Cuántos jugadores tiene un equipo de voleibol en la cancha?", opts: ["5", "7", "6", "8"], ans: 2 },
+  { cat: "Ciencia", q: "¿Cuál es el animal terrestre más rápido?", opts: ["León", "Guepardo", "Antílope", "Caballo"], ans: 1 },
+  { cat: "Geografía", q: "¿Cuál es la capital de Australia?", opts: ["Sídney", "Melbourne", "Brisbane", "Canberra"], ans: 3 },
+  { cat: "Arte y cultura", q: "¿Quién compuso la Quinta Sinfonía?", opts: ["Mozart", "Bach", "Beethoven", "Chopin"], ans: 2 },
+  { cat: "Historia", q: "¿En qué año se firmó la Declaración de Independencia de EUA?", opts: ["1776", "1783", "1769", "1791"], ans: 0 }
+];
+
+const PLAYERS = ["Antonio", "Mi hija"];
+const QS_PER_PLAYER = 10;
+let scores = [0, 0];
+let currentQ = 0;
+let currentPlayer = 0;
+let answered = false;
+let order = [];
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function init() {
+  scores = [0, 0];
+  currentQ = 0;
+  currentPlayer = 0;
+  answered = false;
+  order = shuffle([...Array(questions.length).keys()]).slice(0, QS_PER_PLAYER * 2);
+  render();
+}
+
+function render() {
+  const area = document.getElementById('game-area');
+  if (currentQ >= QS_PER_PLAYER * 2) { renderResults(); return; }
+  const qi = order[currentQ];
+  const q = questions[qi];
+  const player = currentPlayer;
+
+  area.innerHTML = `
+    <div class="header">
+      <div class="scores">
+        <div class="score-card ${player===0?'active':''}">
+          <div class="name">${PLAYERS[0]}</div>
+          <div class="pts" style="color:#378add">${scores[0]}</div>
+        </div>
+        <div class="score-card ${player===1?'active':''}">
+          <div class="name">${PLAYERS[1]}</div>
+          <div class="pts" style="color:#e24b4a">${scores[1]}</div>
+        </div>
+      </div>
+      <div class="turn-badge">Turno de <span>${PLAYERS[player]}</span></div>
+    </div>
+    <div class="progress">Pregunta ${currentQ + 1} de ${QS_PER_PLAYER * 2}</div>
+    <div class="question-card">
+      <div class="category">${q.cat}</div>
+      <div class="question-text">${q.q}</div>
+    </div>
+    <div class="options" id="opts">
+      ${q.opts.map((o, i) => `<button class="opt-btn" onclick="answer(${i})">${o}</button>`).join('')}
+    </div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="next-btn" style="display:none" onclick="nextQ()">
+      ${currentQ + 1 < QS_PER_PLAYER * 2 ? 'Siguiente pregunta →' : 'Ver resultados →'}
+    </button>
+  `;
+}
+
+function answer(idx) {
+  if (answered) return;
+  answered = true;
+  const qi = order[currentQ];
+  const q = questions[qi];
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(b => b.disabled = true);
+  btns[q.ans].classList.add('reveal');
+  const fb = document.getElementById('feedback');
+  if (idx === q.ans) {
+    btns[idx].classList.add('correct');
+    scores[currentPlayer]++;
+    fb.textContent = '✓ ¡Correcto! +1 punto';
+    fb.style.color = '#3b6d11';
+  } else {
+    btns[idx].classList.add('wrong');
+    fb.textContent = '✗ Incorrecto. La respuesta correcta era: ' + q.opts[q.ans];
+    fb.style.color = '#a32d2d';
+  }
+  document.getElementById('next-btn').style.display = 'block';
+}
+
+function nextQ() {
+  currentQ++;
+  currentPlayer = currentQ % 2;
+  answered = false;
+  render();
+}
+
+function renderResults() {
+  const area = document.getElementById('game-area');
+  const tie = scores[0] === scores[1];
+  const winner = scores[0] > scores[1] ? 0 : 1;
+  area.innerHTML = `
+    <div class="results">
+      <h2>Resultados finales</h2>
+      <div class="result-cards">
+        <div class="result-card ${!tie && winner===0 ? 'winner' : ''}">
+          <div class="rname">${PLAYERS[0]}</div>
+          <div class="rscore" style="color:#378add">${scores[0]}</div>
+          <div style="font-size:12px;color:#aaa;margin-top:4px">de ${QS_PER_PLAYER} pts</div>
+        </div>
+        <div class="result-card ${!tie && winner===1 ? 'winner' : ''}">
+          <div class="rname">${PLAYERS[1]}</div>
+          <div class="rscore" style="color:#e24b4a">${scores[1]}</div>
+          <div style="font-size:12px;color:#aaa;margin-top:4px">de ${QS_PER_PLAYER} pts</div>
+        </div>
+      </div>
+      <div class="winner-label">
+        ${tie ? '¡Empate! Están igualados 🤝' : '🏆 Ganador: ' + PLAYERS[winner]}
+      </div>
+      <button class="restart-btn" onclick="init()">Jugar de nuevo</button>
+    </div>
+  `;
+}
+
+init();
+</script>
+</body>
+</html>
