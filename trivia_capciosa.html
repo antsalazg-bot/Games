@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trivia Capciosa</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: system-ui, sans-serif; background: #f5f5f0; color: #1a1a1a; min-height: 100vh; display: flex; justify-content: center; padding: 2rem 1rem; }
+.wrap { width: 100%; max-width: 640px; }
+h1 { font-size: 22px; font-weight: 500; margin-bottom: 0.25rem; text-align: center; }
+.subtitle { font-size: 13px; color: #888; text-align: center; margin-bottom: 1.5rem; }
+.header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 12px; }
+.scores { display: flex; gap: 12px; }
+.score-card { background: #fff; border: 1px solid #e0e0d8; border-radius: 10px; padding: 10px 16px; text-align: center; min-width: 100px; }
+.score-card .name { font-size: 12px; color: #888; margin-bottom: 4px; }
+.score-card .pts { font-size: 22px; font-weight: 500; }
+.score-card.active { border: 2px solid #378add; }
+.turn-badge { font-size: 13px; color: #666; background: #fff; border: 1px solid #e0e0d8; border-radius: 10px; padding: 8px 14px; }
+.turn-badge span { font-weight: 500; color: #1a1a1a; }
+.progress { font-size: 13px; color: #aaa; margin-bottom: 1rem; }
+.question-card { background: #fff; border: 1px solid #e0e0d8; border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
+.category { font-size: 11px; font-weight: 500; color: #d85a30; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; }
+.question-text { font-size: 17px; font-weight: 500; line-height: 1.5; }
+.hint { font-size: 13px; color: #888; margin-top: 8px; font-style: italic; }
+.options { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 1rem; }
+.opt-btn { background: #f5f5f0; border: 1px solid #d8d8d0; border-radius: 8px; padding: 12px 14px; font-size: 14px; cursor: pointer; text-align: left; color: #1a1a1a; transition: background 0.15s; line-height: 1.4; font-family: inherit; }
+.opt-btn:hover:not(:disabled) { background: #eaeae4; }
+.opt-btn.correct { background: #eaf3de; border-color: #639922; color: #3b6d11; font-weight: 500; }
+.opt-btn.wrong { background: #fcebeb; border-color: #e24b4a; color: #a32d2d; }
+.opt-btn.reveal { background: #eaf3de; border-color: #639922; color: #3b6d11; font-weight: 500; }
+.opt-btn:disabled { cursor: default; }
+.feedback { font-size: 14px; margin-top: 12px; min-height: 20px; }
+.explanation { font-size: 13px; color: #555; margin-top: 6px; background: #fafaf7; border-left: 3px solid #d8d8d0; padding: 8px 12px; border-radius: 0 6px 6px 0; }
+.next-btn { margin-top: 1rem; width: 100%; padding: 12px; border-radius: 8px; border: 1px solid #d8d8d0; background: #fff; font-size: 15px; font-weight: 500; cursor: pointer; color: #1a1a1a; font-family: inherit; }
+.next-btn:hover { background: #f5f5f0; }
+.results { text-align: center; padding: 2rem 0; }
+.results h2 { font-size: 22px; font-weight: 500; margin-bottom: 1.5rem; }
+.result-cards { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; margin-bottom: 1.5rem; }
+.result-card { background: #fff; border: 1px solid #e0e0d8; border-radius: 12px; padding: 1.5rem 2rem; min-width: 140px; }
+.result-card .rname { font-size: 14px; color: #888; margin-bottom: 6px; }
+.result-card .rscore { font-size: 36px; font-weight: 500; }
+.result-card.winner { border: 2px solid #639922; }
+.winner-label { font-size: 18px; font-weight: 500; color: #3b6d11; margin-bottom: 1rem; }
+.restart-btn { padding: 12px 32px; border-radius: 8px; border: 1px solid #d8d8d0; background: #fff; font-size: 15px; cursor: pointer; color: #1a1a1a; font-family: inherit; }
+.restart-btn:hover { background: #f5f5f0; }
+@media (max-width: 480px) { .options { grid-template-columns: 1fr; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>Trivia Capciosa 🤔</h1>
+  <p class="subtitle">¡Cuidado! Las respuestas obvias casi nunca son las correctas</p>
+  <div id="game-area"></div>
+</div>
+<script>
+const questions = [
+  { cat: "¡Piénsalo bien!", q: "Un avión se estrella exactamente en la frontera entre México y EUA. ¿En qué país entierran a los sobrevivientes?", opts: ["México", "EUA", "En los dos países", "A los sobrevivientes no se les entierra"], ans: 3, exp: "¡Los sobrevivientes están vivos! No se entierran." },
+  { cat: "Matemáticas", q: "Si tienes 3 manzanas y le quitas 2, ¿cuántas manzanas tienes?", opts: ["1", "2", "3", "5"], ans: 1, exp: "Las 2 que quitaste son las que tienes tú ahora." },
+  { cat: "¡Piénsalo bien!", q: "¿Cuántos meses del año tienen 28 días?", opts: ["1", "2", "4", "12"], ans: 3, exp: "¡Todos los meses tienen al menos 28 días!" },
+  { cat: "Lógica", q: "Un granjero tiene 17 ovejas. Todas menos 9 se mueren. ¿Cuántas le quedan?", opts: ["8", "9", "17", "0"], ans: 1, exp: "'Todas menos 9' significa que 9 sobreviven." },
+  { cat: "¡Piénsalo bien!", q: "¿Qué es más pesado: un kilo de plumas o un kilo de piedras?", opts: ["Las piedras", "Las plumas", "Son iguales", "Depende del tipo"], ans: 2, exp: "¡Ambos pesan exactamente un kilo!" },
+  { cat: "Lógica", q: "Un médico tiene un hermano, pero ese hermano no tiene hermanos. ¿Cómo es posible?", opts: ["Son gemelos", "El médico es mujer", "Uno es adoptado", "Es imposible"], ans: 1, exp: "¡El médico es una mujer! El hermano tiene una hermana, no hermanos." },
+  { cat: "¡Piénsalo bien!", q: "¿Puede un hombre casarse con la hermana de su viuda?", opts: ["Sí, con permiso", "No, es ilegal", "No, porque estaría muerto", "Solo en algunos países"], ans: 2, exp: "Si tiene viuda, ¡el hombre está muerto! No puede casarse con nadie." },
+  { cat: "Matemáticas", q: "Si hay 12 peces en una pecera y la mitad se ahogan, ¿cuántos quedan?", opts: ["6", "12", "0", "Los peces no se ahogan"], ans: 3, exp: "¡Los peces viven en el agua! No pueden ahogarse." },
+  { cat: "Lógica", q: "¿Qué vino primero: el huevo o la gallina?", opts: ["El huevo", "La gallina", "Los dos a la vez", "No tiene respuesta correcta"], ans: 0, exp: "Científicamente, el huevo vino primero — reptiles y otros animales ponían huevos mucho antes de que existieran las gallinas." },
+  { cat: "¡Piénsalo bien!", q: "Tienes un fósforo y entras a un cuarto oscuro con una vela, una lámpara de aceite y una chimenea. ¿Qué enciendes primero?", opts: ["La vela", "La lámpara", "La chimenea", "El fósforo"], ans: 3, exp: "¡Primero el fósforo, para poder encender cualquier otra cosa!" },
+  { cat: "Matemáticas", q: "¿Cuánto es la mitad de 2 más 2?", opts: ["2", "3", "4", "1"], ans: 1, exp: "La mitad de 2 es 1, más 2 = 3. Si dijiste 2, leíste 'la mitad de (2+2)'." },
+  { cat: "Lógica", q: "Un hombre vive en el piso 30 de un edificio. Cada mañana baja por el elevador hasta el piso 1. Al regresar, sube en elevador solo hasta el piso 15 y el resto a pie. ¿Por qué?", opts: ["Hace ejercicio", "El elevador solo llega al 15", "Es muy bajo de estatura", "Le gusta caminar"], ans: 2, exp: "Es chaparro y no alcanza el botón del piso 30. Solo alcanza hasta el 15." },
+  { cat: "¡Piénsalo bien!", q: "¿Qué palabra en español siempre se escribe mal?", opts: ["Ninguna", "Diccionario", "Mal", "Ortografía"], ans: 2, exp: "La palabra 'mal' siempre se escribe M-A-L. ¡Esa es su ortografía correcta!" },
+  { cat: "Matemáticas", q: "Si hay 6 manzanas en una canasta y tomas 4, ¿cuántas manzanas tienes?", opts: ["2", "4", "6", "0"], ans: 1, exp: "¡Las 4 que tomaste! No cuántas quedaron en la canasta." },
+  { cat: "Lógica", q: "¿Qué tiene dientes pero no puede morder?", opts: ["Un tiburón bebé", "Un peine", "Una llave", "Un engrane"], ans: 1, exp: "¡Un peine! Tiene dientes pero no muerde a nadie." },
+  { cat: "¡Piénsalo bien!", q: "Un gallo pone un huevo en el techo de una casa. ¿Hacia qué lado cae el huevo?", opts: ["Al lado derecho", "Al lado izquierdo", "Hacia el frente", "Los gallos no ponen huevos"], ans: 3, exp: "¡Los gallos no ponen huevos! Solo las gallinas lo hacen." },
+  { cat: "Matemáticas", q: "Hay 10 pájaros en un árbol. Un cazador dispara y mata a uno. ¿Cuántos quedan?", opts: ["9", "10", "1", "0"], ans: 3, exp: "El disparo asustó a los otros 9, que volaron. Solo quedó el muerto... y se lo llevaron los demás animales." },
+  { cat: "Lógica", q: "¿Cuál es la capital de Francia?", opts: ["París", "Lyon", "Marsella", "Niza"], ans: 0, exp: "Esta sí era fácil, ¿verdad? ¡París! A veces la respuesta obvia sí es correcta 😄" },
+  { cat: "¡Piénsalo bien!", q: "Si en una carrera de 100 personas adelantas al que va en segundo lugar, ¿en qué posición quedas?", opts: ["Primero", "Segundo", "Tercero", "Depende"], ans: 1, exp: "Quedas en segundo. Para quedar primero tendrías que adelantar al que va en primer lugar." },
+  { cat: "Lógica", q: "¿Qué puede viajar alrededor del mundo sin moverse del mismo lugar?", opts: ["El tiempo", "El sol", "Un sello postal", "El internet"], ans: 2, exp: "¡Un sello postal! Viaja pegado a una carta alrededor del mundo sin moverse solo." }
+];
+
+const PLAYERS = ["Antonio", "Mi hija"];
+const QS_PER_PLAYER = 10;
+let scores = [0, 0];
+let currentQ = 0;
+let currentPlayer = 0;
+let answered = false;
+let order = [];
+
+function shuffle(arr) {
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  return arr;
+}
+
+function init() {
+  scores = [0, 0];
+  currentQ = 0;
+  currentPlayer = 0;
+  answered = false;
+  order = shuffle([...Array(questions.length).keys()]).slice(0, QS_PER_PLAYER * 2);
+  render();
+}
+
+function render() {
+  const area = document.getElementById('game-area');
+  if (currentQ >= QS_PER_PLAYER * 2) { renderResults(); return; }
+  const qi = order[currentQ];
+  const q = questions[qi];
+  const player = currentPlayer;
+
+  area.innerHTML = `
+    <div class="header">
+      <div class="scores">
+        <div class="score-card ${player===0?'active':''}">
+          <div class="name">${PLAYERS[0]}</div>
+          <div class="pts" style="color:#378add">${scores[0]}</div>
+        </div>
+        <div class="score-card ${player===1?'active':''}">
+          <div class="name">${PLAYERS[1]}</div>
+          <div class="pts" style="color:#e24b4a">${scores[1]}</div>
+        </div>
+      </div>
+      <div class="turn-badge">Turno de <span>${PLAYERS[player]}</span></div>
+    </div>
+    <div class="progress">Pregunta ${currentQ + 1} de ${QS_PER_PLAYER * 2}</div>
+    <div class="question-card">
+      <div class="category">${q.cat}</div>
+      <div class="question-text">${q.q}</div>
+    </div>
+    <div class="options" id="opts">
+      ${q.opts.map((o, i) => `<button class="opt-btn" onclick="answer(${i})">${o}</button>`).join('')}
+    </div>
+    <div class="feedback" id="feedback"></div>
+    <button class="next-btn" id="next-btn" style="display:none" onclick="nextQ()">
+      ${currentQ + 1 < QS_PER_PLAYER * 2 ? 'Siguiente pregunta →' : 'Ver resultados →'}
+    </button>
+  `;
+}
+
+function answer(idx) {
+  if (answered) return;
+  answered = true;
+  const qi = order[currentQ];
+  const q = questions[qi];
+  const btns = document.querySelectorAll('.opt-btn');
+  btns.forEach(b => b.disabled = true);
+  btns[q.ans].classList.add('reveal');
+  const fb = document.getElementById('feedback');
+  let html = '';
+  if (idx === q.ans) {
+    btns[idx].classList.add('correct');
+    scores[currentPlayer]++;
+    html = `<div style="color:#3b6d11;font-weight:500;margin-bottom:6px">✓ ¡Correcto! +1 punto</div>`;
+  } else {
+    btns[idx].classList.add('wrong');
+    html = `<div style="color:#a32d2d;font-weight:500;margin-bottom:6px">✗ ¡Caíste en la trampa!</div>`;
+  }
+  html += `<div class="explanation">💡 ${q.exp}</div>`;
+  fb.innerHTML = html;
+  document.getElementById('next-btn').style.display = 'block';
+}
+
+function nextQ() {
+  currentQ++;
+  currentPlayer = currentQ % 2;
+  answered = false;
+  render();
+}
+
+function renderResults() {
+  const area = document.getElementById('game-area');
+  const tie = scores[0] === scores[1];
+  const winner = scores[0] > scores[1] ? 0 : 1;
+  const medals = ['🥇','🥈','🥉'];
+  area.innerHTML = `
+    <div class="results">
+      <h2>Resultados finales 🏆</h2>
+      <div class="result-cards">
+        <div class="result-card ${!tie && winner===0 ? 'winner' : ''}">
+          <div class="rname">${PLAYERS[0]}</div>
+          <div class="rscore" style="color:#378add">${scores[0]}</div>
+          <div style="font-size:12px;color:#aaa;margin-top:4px">de ${QS_PER_PLAYER} pts</div>
+        </div>
+        <div class="result-card ${!tie && winner===1 ? 'winner' : ''}">
+          <div class="rname">${PLAYERS[1]}</div>
+          <div class="rscore" style="color:#e24b4a">${scores[1]}</div>
+          <div style="font-size:12px;color:#aaa;margin-top:4px">de ${QS_PER_PLAYER} pts</div>
+        </div>
+      </div>
+      <div class="winner-label">
+        ${tie ? '¡Empate! Los dos son igual de listos 🤝' : '🏆 Ganador: ' + PLAYERS[winner]}
+      </div>
+      <button class="restart-btn" onclick="init()">Jugar de nuevo</button>
+    </div>
+  `;
+}
+
+init();
+</script>
+</body>
+</html>
