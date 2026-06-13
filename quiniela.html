@@ -101,7 +101,7 @@ input::placeholder{color:rgba(255,255,255,.3)}
   <div class="nav">
     <button class="nav-btn active" onclick="showTab('picks')">Mis pronósticos</button>
     <button class="nav-btn" onclick="showTab('tabla')">Posiciones</button>
-    <button class="nav-btn" onclick="showTab('resultados')">Resultados</button>
+    <button class="nav-btn" onclick="showTab('comparativo')">Comparativo</button>
   </div>
   <div id="picksTab" class="main">
     <div id="picksContent"></div>
@@ -114,6 +114,9 @@ input::placeholder{color:rgba(255,255,255,.3)}
   <div id="resultadosTab" class="main" style="display:none">
     <div class="admin-note">Captura los resultados reales aquí. Todos verán los puntos actualizados automáticamente.</div>
     <div id="resultadosContent"></div>
+  </div>
+  <div id="comparativoTab" class="main" style="display:none">
+    <div id="comparativoContent"></div>
   </div>
 </div>
 
@@ -421,11 +424,12 @@ async function cargarDatos(){
 
 // ── TABS ─────────────────────────────────────────────────────
 function showTab(tab){
-  ['picks','tabla','resultados'].forEach(t=>{
+  ['picks','tabla','resultados','comparativo'].forEach(t=>{
     document.getElementById(t+'Tab').style.display=t===tab?'block':'none';
   });
-  document.querySelectorAll('.nav-btn').forEach((b,i)=>b.classList.toggle('active',['picks','tabla','resultados'][i]===tab));
+  document.querySelectorAll('.nav-btn').forEach((b,i)=>b.classList.toggle('active',['picks','tabla','comparativo'][i]===tab));
   if(tab==='tabla') cargarDatos().then(renderTabla);
+  if(tab==='comparativo') cargarDatos().then(renderComparativo);
 }
 
 // ── PICKS ─────────────────────────────────────────────────────
@@ -439,13 +443,22 @@ function calcPts(pred,res){
 }
 
 function renderPicks(){
-  const GRUPOS=['A','B','C','D','E','F','G','H','I','J','K','L','16avos','Cuartos','Semis','Tercer lugar','Final'];
   const LABELS={A:'Grupo A',B:'Grupo B',C:'Grupo C',D:'Grupo D',E:'Grupo E',F:'Grupo F',G:'Grupo G',H:'Grupo H',I:'Grupo I',J:'Grupo J',K:'Grupo K',L:'Grupo L','16avos':'Dieciseisavos','Cuartos':'Cuartos de Final','Semis':'Semifinales','Tercer lugar':'Tercer Lugar','Final':'Gran Final'};
+
+  const completed=PARTIDOS.filter(p=>allData.resultados[p.id]).sort((a,b)=>(KICKOFFS[b.id]||0)-(KICKOFFS[a.id]||0));
+  const live=PARTIDOS.filter(p=>!allData.resultados[p.id]&&matchStarted(p.id));
+  const upcoming=PARTIDOS.filter(p=>!allData.resultados[p.id]&&!matchStarted(p.id)).sort((a,b)=>(KICKOFFS[a.id]||0)-(KICKOFFS[b.id]||0));
+
+  const sections=[
+    {label:'✅ Partidos jugados', ps:completed},
+    {label:'🔴 En curso', ps:live},
+    {label:'📅 Próximos partidos', ps:upcoming},
+  ];
+
   let html='';
-  GRUPOS.forEach(g=>{
-    const ps=PARTIDOS.filter(p=>p.g===g);
+  sections.forEach(({label,ps})=>{
     if(!ps.length) return;
-    html+=`<div class="fase-label">${LABELS[g]}</div>`;
+    html+=`<div class="fase-label">${label}</div>`;
     ps.forEach(p=>{
       const pred=picks[p.id]||{};
       const res=allData.resultados[p.id];
@@ -453,7 +466,7 @@ function renderPicks(){
       const pts=calcPts(pred,res);
       const badge=pts!==null?`<span class="pbadge p${pts}">${pts===3?'3pts ✓':pts===1?'1pt ~':'0pts ✗'}</span>`:'';
       html+=`<div class="pcard${p.mx?' mx':''}">
-        <div class="pmeta"><span>${p.g!=='A'&&p.g!=='B'&&p.g!=='C'&&p.g!=='D'&&p.g!=='E'&&p.g!=='F'&&p.g!=='G'&&p.g!=='H'&&p.g!=='I'&&p.g!=='J'&&p.g!=='K'&&p.g!=='L'?'':'Grupo '+p.g+' · '}${p.fecha}</span><span>${p.sede}</span></div>
+        <div class="pmeta"><span>Grupo ${p.g} · ${p.fecha}</span><span>${p.sede}</span></div>
         <div class="pteams">
           <span class="pteam">${p.mx&&p.local==='México'?'🇲🇽 ':''}${p.local}</span>
           <span class="pvs">vs</span>
@@ -467,7 +480,7 @@ function renderPicks(){
           <div style="flex:1;display:flex;justify-content:flex-end">
             <input type="number" class="sinput" inputmode="numeric" pattern="[0-9]*" id="v_${p.id}" min="0" max="20" value="${pred.predVisitante??''}" placeholder="0" value=""${res?' disabled':''}>
           </div>
-          ${badge}${started&&!res?'<span style="font-size:10px;color:#f87171;margin-left:6px">🔒 En curso</span>':''}
+          ${badge}${started&&!res?'<span style="font-size:10px;color:#f87171;margin-left:6px">🔒 En curso</span>':res&&pts===null?'<span style="font-size:10px;color:rgba(255,255,255,.3);margin-left:6px">Sin pronóstico</span>':''}
         </div>
         ${res?`<div class="presult">Resultado: ${res.local} - ${res.visitante}</div>`:''}
       </div>`;
@@ -562,6 +575,74 @@ async function saveRes(id){
   await cargarDatos();
   renderPicks();renderTabla();renderResultados();
   showToast('Resultado guardado ✓');
+}
+
+
+// ── COMPARATIVO ───────────────────────────────────────────────
+function renderComparativo(){
+  const jugados = PARTIDOS.filter(p => allData.resultados[p.id]);
+  const fams = Object.keys(allData.familias||{}).sort();
+
+  if(!jugados.length){
+    document.getElementById('comparativoContent').innerHTML='<p style="text-align:center;color:rgba(255,255,255,.3);padding:2rem">Aún no hay partidos jugados</p>';
+    return;
+  }
+
+  const calcPts2=(pred,res)=>{
+    if(!res||pred===undefined||pred.predLocal===undefined||pred.predLocal==='') return null;
+    const pL=Number(pred.predLocal),pV=Number(pred.predVisitante);
+    const rL=Number(res.local),rV=Number(res.visitante);
+    if(isNaN(pL)||isNaN(pV)||isNaN(rL)||isNaN(rV)) return null;
+    if(pL===rL&&pV===rV) return 3;
+    if((pL>pV&&rL>rV)||(pL<pV&&rL<rV)||(pL===pV&&rL===rV)) return 1;
+    return 0;
+  };
+
+  let html=`<div style="overflow-x:auto">
+  <table style="width:100%;border-collapse:collapse;min-width:420px">
+    <thead>
+      <tr>
+        <th style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:rgba(255,255,255,.3);padding:8px 10px;border-bottom:.5px solid #2a2a2a;text-align:left;white-space:nowrap">Partido</th>
+        <th style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:rgba(255,255,255,.3);padding:8px 10px;border-bottom:.5px solid #2a2a2a;text-align:left;white-space:nowrap">Result.</th>
+        ${fams.map(f=>`<th style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:${f===familia?'#C8A951':'rgba(255,255,255,.3)'};padding:8px 10px;border-bottom:.5px solid #2a2a2a;text-align:center;white-space:nowrap">${f}</th>`).join('')}
+      </tr>
+    </thead>
+    <tbody>`;
+
+  jugados.forEach(p=>{
+    const res=allData.resultados[p.id];
+    html+=`<tr>
+      <td style="padding:8px 10px;border-bottom:.5px solid #1e1e1e;font-size:12px;color:rgba(255,255,255,.6);white-space:nowrap">${p.local} vs ${p.visit}<br><span style="font-size:10px;color:rgba(255,255,255,.25)">Grupo ${p.g} · ${p.fecha}</span></td>
+      <td style="padding:8px 10px;border-bottom:.5px solid #1e1e1e;font-size:13px;font-weight:700;color:#4ade80;white-space:nowrap">${res.local} - ${res.visitante}</td>`;
+    fams.forEach(f=>{
+      const pick=(allData.familias[f]?.picks||{})[p.id];
+      const pts=calcPts2(pick,res);
+      const isMine=f===familia;
+      if(pts===null){
+        html+=`<td style="padding:8px 10px;border-bottom:.5px solid #1e1e1e;text-align:center;font-size:11px;color:rgba(255,255,255,.2)">—</td>`;
+      } else {
+        const badge=pts===3?'<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(74,222,128,.15);color:#4ade80">3pts ✓</span>':pts===1?'<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(200,169,81,.15);color:#C8A951">1pt ~</span>':'<span style="font-size:10px;font-weight:700;padding:2px 7px;border-radius:20px;background:rgba(255,255,255,.05);color:rgba(255,255,255,.3)">0pts ✗</span>';
+        html+=`<td style="padding:8px 10px;border-bottom:.5px solid #1e1e1e;text-align:center${isMine?';background:rgba(200,169,81,.04)':''}">
+          <span style="font-size:12px;color:rgba(255,255,255,.5);display:block">${pick.predLocal} - ${pick.predVisitante}</span>
+          ${badge}
+        </td>`;
+      }
+    });
+    html+='</tr>';
+  });
+
+  // Totals row
+  html+=`<tr style="background:#1a1a1a">
+    <td colspan="2" style="padding:8px 10px;font-size:11px;color:rgba(255,255,255,.3);font-weight:700;text-transform:uppercase;letter-spacing:.07em">Total</td>
+    ${fams.map(f=>{
+      const pts=(allData.familias[f]?.puntos)||0;
+      const isMine=f===familia;
+      return `<td style="padding:8px 10px;text-align:center;font-size:16px;font-weight:700;color:${isMine?'#C8A951':'#fff'}">${pts}</td>`;
+    }).join('')}
+  </tr>`;
+
+  html+=`</tbody></table></div>`;
+  document.getElementById('comparativoContent').innerHTML=html;
 }
 
 function showToast(msg){
