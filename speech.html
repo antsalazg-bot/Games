@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Speech Practice – Fatima</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Georgia', serif;
+    background: #1a1a2e;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 36px 32px 28px;
+    max-width: 600px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+  }
+
+  .badge {
+    display: inline-block;
+    background: #f0e6ff;
+    color: #6c3fc5;
+    font-family: 'Arial', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 20px;
+    margin-bottom: 14px;
+  }
+
+  h1 {
+    font-size: 22px;
+    color: #1a1a2e;
+    margin-bottom: 6px;
+  }
+
+  .subtitle {
+    font-family: 'Arial', sans-serif;
+    font-size: 13px;
+    color: #888;
+    margin-bottom: 24px;
+  }
+
+  .speech-text {
+    background: #f9f7ff;
+    border-left: 4px solid #7c4dff;
+    border-radius: 8px;
+    padding: 20px 22px;
+    font-size: 17px;
+    line-height: 1.85;
+    color: #333;
+    margin-bottom: 28px;
+    min-height: 120px;
+  }
+
+  .word {
+    display: inline;
+    border-radius: 3px;
+    padding: 1px 2px;
+    transition: background 0.1s;
+  }
+
+  .word.active {
+    background: #ffd740;
+    color: #1a1a2e;
+    font-weight: bold;
+  }
+
+  .controls {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    font-family: 'Arial', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    padding: 11px 24px;
+    transition: transform 0.1s, opacity 0.2s;
+  }
+
+  .btn:active { transform: scale(0.96); }
+
+  .btn-play {
+    background: #7c4dff;
+    color: #fff;
+    min-width: 110px;
+  }
+
+  .btn-play:hover { background: #6c3fc5; }
+
+  .btn-stop {
+    background: #ffe0e0;
+    color: #c0392b;
+  }
+
+  .btn-stop:hover { background: #ffc8c8; }
+
+  .speed-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+    font-family: 'Arial', sans-serif;
+    font-size: 13px;
+    color: #555;
+  }
+
+  .speed-group label { font-weight: 600; }
+
+  input[type=range] {
+    width: 90px;
+    accent-color: #7c4dff;
+  }
+
+  #speedVal {
+    min-width: 30px;
+    font-weight: 700;
+    color: #7c4dff;
+  }
+
+  .status {
+    font-family: 'Arial', sans-serif;
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 16px;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="badge">🎓 Graduation Speech</div>
+  <h1>Practice Your Speech, Fatima!</h1>
+  <p class="subtitle">Press Play and follow along — the word being read will be highlighted.</p>
+
+  <div class="speech-text" id="textDisplay"></div>
+
+  <div class="controls">
+    <button class="btn btn-play" id="playBtn" onclick="togglePlay()">▶ Play</button>
+    <button class="btn btn-stop" onclick="stopSpeech()">■ Stop</button>
+    <div class="speed-group">
+      <label for="speed">Speed:</label>
+      <input type="range" id="speed" min="0.5" max="1.5" step="0.1" value="0.85" oninput="updateSpeed()">
+      <span id="speedVal">0.85×</span>
+    </div>
+  </div>
+  <div class="status" id="status">Ready to practice 🎤</div>
+</div>
+
+<script>
+const text = `Good morning, I'm Fatima from 5th grade, honored to speak for our class as we say goodbye to our 6th graders. You've been amazing role models—responsible, kind, and inspiring. We've learned so much from you. We know you're ready for middle school and will do great things. We'll miss you, but we're excited for you. Wishing you all the best. Thank you for your friendship and leadership. Congratulations and farewell!`;
+
+const words = text.split(/(\s+)/);
+const display = document.getElementById('textDisplay');
+const wordSpans = [];
+
+words.forEach((token, i) => {
+  if (/\s+/.test(token)) {
+    display.appendChild(document.createTextNode(token));
+  } else {
+    const span = document.createElement('span');
+    span.className = 'word';
+    span.textContent = token;
+    span.dataset.index = wordSpans.length;
+    display.appendChild(span);
+    wordSpans.push(span);
+  }
+});
+
+let utterance = null;
+let speaking = false;
+
+function togglePlay() {
+  if (speaking) {
+    window.speechSynthesis.pause();
+    speaking = false;
+    document.getElementById('playBtn').textContent = '▶ Resume';
+    document.getElementById('status').textContent = 'Paused';
+  } else {
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+      speaking = true;
+      document.getElementById('playBtn').textContent = '⏸ Pause';
+      document.getElementById('status').textContent = 'Playing... 🎤';
+    } else {
+      startSpeech();
+    }
+  }
+}
+
+function startSpeech() {
+  window.speechSynthesis.cancel();
+  clearHighlights();
+
+  utterance = new SpeechSynthesisUtterance(text);
+  utterance.lang = 'en-US';
+  utterance.rate = parseFloat(document.getElementById('speed').value);
+
+  // Pick a good English voice if available
+  const voices = window.speechSynthesis.getVoices();
+  const preferred = voices.find(v => v.lang === 'en-US' && v.name.includes('Samantha'))
+    || voices.find(v => v.lang === 'en-US')
+    || voices.find(v => v.lang.startsWith('en'));
+  if (preferred) utterance.voice = preferred;
+
+  let wordIndex = 0;
+  utterance.onboundary = (e) => {
+    if (e.name === 'word') {
+      clearHighlights();
+      if (wordIndex < wordSpans.length) {
+        wordSpans[wordIndex].classList.add('active');
+        wordSpans[wordIndex].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+        wordIndex++;
+      }
+    }
+  };
+
+  utterance.onend = () => {
+    speaking = false;
+    clearHighlights();
+    document.getElementById('playBtn').textContent = '▶ Play';
+    document.getElementById('status').textContent = '✅ Done! Great job, Fatima!';
+  };
+
+  utterance.onerror = () => {
+    document.getElementById('status').textContent = '⚠️ Speech error. Try again.';
+  };
+
+  speaking = true;
+  document.getElementById('playBtn').textContent = '⏸ Pause';
+  document.getElementById('status').textContent = 'Playing... 🎤';
+  window.speechSynthesis.speak(utterance);
+}
+
+function stopSpeech() {
+  window.speechSynthesis.cancel();
+  speaking = false;
+  clearHighlights();
+  document.getElementById('playBtn').textContent = '▶ Play';
+  document.getElementById('status').textContent = 'Stopped.';
+}
+
+function clearHighlights() {
+  wordSpans.forEach(s => s.classList.remove('active'));
+}
+
+function updateSpeed() {
+  const val = parseFloat(document.getElementById('speed').value);
+  document.getElementById('speedVal').textContent = val.toFixed(1) + '×';
+  if (utterance) utterance.rate = val;
+}
+
+// Load voices (some browsers need this)
+window.speechSynthesis.onvoiceschanged = () => {};
+</script>
+</body>
+</html>
