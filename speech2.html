@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fatima's Speech Coach</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(160deg, #1a0533 0%, #2d1b69 50%, #1a0533 100%);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px 14px 40px;
+    color: #fff;
+  }
+
+  .top-badge {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #b39ddb;
+    margin-bottom: 6px;
+    text-align: center;
+  }
+
+  h1 {
+    font-size: 22px;
+    text-align: center;
+    font-weight: 800;
+    color: #fff;
+    margin-bottom: 2px;
+  }
+
+  .sub {
+    font-size: 13px;
+    color: #9575cd;
+    text-align: center;
+    margin-bottom: 18px;
+  }
+
+  /* ── STAGE ── */
+  .stage-wrap {
+    width: 100%;
+    max-width: 400px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 24px;
+    padding: 16px 12px 12px;
+    margin-bottom: 14px;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+
+  svg#fig {
+    flex-shrink: 0;
+    width: 120px;
+    height: 180px;
+  }
+
+  .tip-panel {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  .tip-label {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: #9575cd;
+  }
+
+  .tip-title {
+    font-size: 16px;
+    font-weight: 800;
+    color: #ffd740;
+    line-height: 1.2;
+  }
+
+  .tip-desc {
+    font-size: 12px;
+    color: #d1c4e9;
+    line-height: 1.5;
+  }
+
+  /* ── SPEECH TEXT ── */
+  .speech-card {
+    width: 100%;
+    max-width: 400px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 18px;
+    padding: 16px;
+    margin-bottom: 14px;
+    font-size: 15px;
+    line-height: 2;
+    color: #e8e0ff;
+  }
+
+  .word {
+    display: inline;
+    padding: 1px 3px;
+    border-radius: 4px;
+    transition: background 0.1s;
+  }
+  .word.active {
+    background: #ffd740;
+    color: #1a0533;
+    font-weight: 700;
+  }
+
+  /* ── CONTROLS ── */
+  .controls {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+
+  .btn {
+    border: none;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 12px 22px;
+    font-family: inherit;
+    transition: transform 0.1s;
+  }
+  .btn:active { transform: scale(0.95); }
+
+  .btn-play { background: #7c4dff; color: #fff; min-width: 110px; }
+  .btn-play:hover { background: #651fff; }
+  .btn-stop { background: rgba(255,255,255,0.1); color: #e0d0ff; }
+
+  .speed-wrap {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: #9575cd;
+  }
+  .speed-wrap label { font-weight: 700; }
+  input[type=range] { width: 80px; accent-color: #7c4dff; }
+  #speedVal { color: #ffd740; font-weight: 700; min-width: 32px; }
+
+  .status {
+    font-size: 12px;
+    color: #7e57c2;
+    text-align: center;
+    min-height: 18px;
+  }
+
+  /* ── FIGURE ANIMATIONS ── */
+  @keyframes sway     { 0%,100%{transform:rotate(-1.5deg)} 50%{transform:rotate(1.5deg)} }
+  @keyframes nod      { 0%,100%{transform:translateY(0)} 50%{transform:translateY(2px)} }
+  @keyframes waveR    { 0%,100%{transform:rotate(0deg) translateY(0)} 50%{transform:rotate(25deg) translateY(-10px)} }
+  @keyframes waveL    { 0%,100%{transform:rotate(0deg) translateY(0)} 50%{transform:rotate(-25deg) translateY(-10px)} }
+  @keyframes pointR   { 0%,100%{transform:rotate(-15deg)} 50%{transform:rotate(15deg)} }
+  @keyframes breathe  { 0%,100%{transform:scaleY(1)} 50%{transform:scaleY(1.07)} }
+  @keyframes eyeMove  { 0%,100%{transform:translateX(0)} 33%{transform:translateX(-3px)} 66%{transform:translateX(3px)} }
+  @keyframes pulseRing{ 0%{r:8;opacity:0.7} 100%{r:20;opacity:0} }
+  @keyframes bounce   { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-6px)} }
+
+  .a-sway    { animation: sway 2s ease-in-out infinite; transform-origin: 60px 170px; }
+  .a-nod     { animation: nod 1.3s ease-in-out infinite; transform-origin: 60px 26px; }
+  .a-waveR   { animation: waveR 1s ease-in-out infinite; transform-origin: 84px 76px; }
+  .a-waveL   { animation: waveL 1.1s ease-in-out infinite; transform-origin: 36px 76px; }
+  .a-pointR  { animation: pointR 1.2s ease-in-out infinite; transform-origin: 88px 72px; }
+  .a-breathe { animation: breathe 2s ease-in-out infinite; transform-origin: 60px 110px; }
+  .a-eyemove { animation: eyeMove 2.5s ease-in-out infinite; }
+  .a-bounce  { animation: bounce 1s ease-in-out infinite; }
+  .pulse     { animation: pulseRing 1.2s ease-out infinite; }
+</style>
+</head>
+<body>
+
+<div class="top-badge">🎓 Speech Coach</div>
+<h1>Fatima's Big Speech</h1>
+<p class="sub">Watch the coach & follow the highlighted words</p>
+
+<!-- STAGE -->
+<div class="stage-wrap">
+  <svg id="fig" viewBox="0 0 120 180" xmlns="http://www.w3.org/2000/svg">
+
+    <!-- Floor -->
+    <rect x="10" y="172" width="100" height="5" rx="2.5" fill="rgba(255,255,255,0.08)"/>
+
+    <!-- Body (posture group) -->
+    <g id="gBody">
+
+      <!-- Torso -->
+      <g id="gTorso" class="a-breathe">
+        <rect x="43" y="70" width="34" height="52" rx="8" fill="#7c4dff"/>
+        <path d="M43 98 Q60 110 77 98 L80 122 Q60 130 40 122 Z" fill="#651fff"/>
+      </g>
+
+      <!-- Head -->
+      <g id="gHead" class="a-nod">
+        <circle cx="60" cy="36" r="22" fill="#f4c08a"/>
+        <!-- Hair -->
+        <path d="M38 33 Q40 14 60 12 Q80 14 82 33 Q75 22 60 20 Q45 22 38 33Z" fill="#2c1a0e"/>
+        <path d="M38 33 Q34 42 36 52 Q38 42 42 40Z" fill="#2c1a0e"/>
+        <path d="M82 33 Q86 42 84 52 Q82 42 78 40Z" fill="#2c1a0e"/>
+        <!-- Eyes -->
+        <g id="gEyes" class="a-eyemove">
+          <circle cx="53" cy="35" r="3" fill="#2c1a0e"/>
+          <circle cx="67" cy="35" r="3" fill="#2c1a0e"/>
+          <circle cx="54" cy="34" r="1" fill="white"/>
+          <circle cx="68" cy="34" r="1" fill="white"/>
+        </g>
+        <!-- Brows -->
+        <path d="M48 28 Q53 25 58 28" stroke="#2c1a0e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <path d="M62 28 Q67 25 72 28" stroke="#2c1a0e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+        <!-- Mouth -->
+        <path id="mouth" d="M53 44 Q60 50 67 44" stroke="#c0704a" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <!-- Cheeks -->
+        <circle cx="47" cy="42" r="4" fill="#f08060" opacity="0.3"/>
+        <circle cx="73" cy="42" r="4" fill="#f08060" opacity="0.3"/>
+      </g>
+
+      <!-- Neck -->
+      <rect x="56" y="56" width="8" height="16" rx="4" fill="#f4c08a"/>
+
+      <!-- Left arm -->
+      <g id="gArmL">
+        <line x1="43" y1="76" x2="26" y2="106" stroke="#f4c08a" stroke-width="9" stroke-linecap="round"/>
+        <circle cx="26" cy="106" r="6" fill="#f4c08a"/>
+      </g>
+
+      <!-- Right arm -->
+      <g id="gArmR">
+        <line x1="77" y1="76" x2="94" y2="106" stroke="#f4c08a" stroke-width="9" stroke-linecap="round"/>
+        <circle cx="94" cy="106" r="6" fill="#f4c08a"/>
+      </g>
+
+      <!-- Legs -->
+      <line x1="53" y1="122" x2="47" y2="172" stroke="#311b92" stroke-width="10" stroke-linecap="round"/>
+      <line x1="67" y1="122" x2="73" y2="172" stroke="#311b92" stroke-width="10" stroke-linecap="round"/>
+      <ellipse cx="45" cy="173" rx="9" ry="4" fill="#1a0533"/>
+      <ellipse cx="75" cy="173" rx="9" ry="4" fill="#1a0533"/>
+    </g>
+
+    <!-- Sound waves -->
+    <g id="gSound" opacity="0">
+      <circle cx="105" cy="36" r="8" fill="none" stroke="#ffd740" stroke-width="2" class="pulse"/>
+      <circle cx="105" cy="36" r="4" fill="#ffd740" opacity="0.6"/>
+      <path d="M109 32 Q114 36 109 40" stroke="#ffd740" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+      <path d="M111 29 Q119 36 111 43" stroke="#ffd740" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.6"/>
+    </g>
+
+    <!-- Eye contact rays -->
+    <g id="gEyeRays" opacity="0">
+      <circle cx="12" cy="16" r="3" fill="#00e5ff" opacity="0.8"/>
+      <circle cx="108" cy="12" r="3" fill="#00e5ff" opacity="0.8"/>
+      <circle cx="60" cy="8"  r="3" fill="#00e5ff"/>
+      <line x1="56" y1="34" x2="60" y2="10"  stroke="#00e5ff" stroke-width="1" stroke-dasharray="3,3" opacity="0.5"/>
+      <line x1="54" y1="35" x2="14" y2="17"  stroke="#00e5ff" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+      <line x1="66" y1="35" x2="106" y2="13" stroke="#00e5ff" stroke-width="1" stroke-dasharray="3,3" opacity="0.4"/>
+    </g>
+
+  </svg>
+
+  <div class="tip-panel">
+    <div class="tip-label">NOW DO THIS</div>
+    <div class="tip-title" id="tipTitle">Get Ready! 🌟</div>
+    <div class="tip-desc"  id="tipDesc">Press Play and I'll guide you through your speech step by step.</div>
+  </div>
+</div>
+
+<!-- SPEECH TEXT -->
+<div class="speech-card" id="speechText"></div>
+
+<!-- CONTROLS -->
+<div class="controls">
+  <button class="btn btn-play" id="playBtn" onclick="togglePlay()">▶ Play</button>
+  <button class="btn btn-stop" onclick="stopAll()">■ Stop</button>
+  <div class="speed-wrap">
+    <label>Speed</label>
+    <input type="range" id="speed" min="0.5" max="1.4" step="0.1" value="0.8" oninput="updateSpeed()">
+    <span id="speedVal">0.8×</span>
+  </div>
+</div>
+<div class="status" id="status">Ready 🎤</div>
+
+<script>
+// ── SPEECH SEGMENTS ──────────────────────────────────────────────
+// Each segment has the text words, a tip, and a body language cue
+const segments = [
+  {
+    words: ["Good","morning,","I'm","Fatima","from","5th","grade,"],
+    tip: "😊 Stand Tall & Smile",
+    desc: "Shoulders back, chin up. Big smile as you introduce yourself!",
+    cue: "posture"
+  },
+  {
+    words: ["honored","to","speak","for","our","class"],
+    tip: "👁️ Eye Contact",
+    desc: "Look at the audience — scan left, center, right.",
+    cue: "eye"
+  },
+  {
+    words: ["as","we","say","goodbye","to","our","6th","graders."],
+    tip: "🙌 Open Hands",
+    desc: "Gesture openly toward the 6th graders with both hands.",
+    cue: "hands"
+  },
+  {
+    words: ["You've","been","amazing","role","models—"],
+    tip: "👐 Big Open Gesture",
+    desc: "Spread both arms wide when you say 'amazing'!",
+    cue: "handsWide"
+  },
+  {
+    words: ["responsible,","kind,","and","inspiring."],
+    tip: "👉 Count with Fingers",
+    desc: "Point one finger for each word: responsible… kind… inspiring.",
+    cue: "point"
+  },
+  {
+    words: ["We've","learned","so","much","from","you."],
+    tip: "💛 Hand on Heart",
+    desc: "Place one hand on your chest — it shows sincerity.",
+    cue: "heart"
+  },
+  {
+    words: ["We","know","you're","ready","for","middle","school"],
+    tip: "👁️ Look at Them",
+    desc: "Make direct eye contact with the 6th graders now.",
+    cue: "eye"
+  },
+  {
+    words: ["and","will","do","great","things."],
+    tip: "✊ Confident Nod",
+    desc: "Nod your head slowly and confidently as you say this.",
+    cue: "nod"
+  },
+  {
+    words: ["We'll","miss","you,"],
+    tip: "😢 Soft Expression",
+    desc: "Let a little emotion show — it's okay! The audience will connect.",
+    cue: "posture"
+  },
+  {
+    words: ["but","we're","excited","for","you."],
+    tip: "🎉 Smile Big!",
+    desc: "Light up your face — pure excitement and joy!",
+    cue: "bounce"
+  },
+  {
+    words: ["Wishing","you","all","the","best."],
+    tip: "🙏 Warm Gesture",
+    desc: "Both hands open, palms facing up — like you're offering a gift.",
+    cue: "handsWide"
+  },
+  {
+    words: ["Thank","you","for","your","friendship","and","leadership."],
+    tip: "🎙️ Slow Down Here",
+    desc: "Speak slowly and clearly. This is the heart of your speech.",
+    cue: "voice"
+  },
+  {
+    words: ["Congratulations","and","farewell!"],
+    tip: "🌟 Finish Strong!",
+    desc: "Big smile, stand tall, open arms. You did it! Take a bow.",
+    cue: "all"
+  }
+];
+
+// Build flat word list with segment index
+const allWords = [];
+segments.forEach((seg, si) => {
+  seg.words.forEach(w => allWords.push({ text: w, seg: si }));
+});
+
+// ── RENDER SPEECH TEXT ──────────────────────────────────────────
+const textDiv = document.getElementById('speechText');
+const spans   = [];
+allWords.forEach((w, i) => {
+  if (i > 0) textDiv.appendChild(document.createTextNode(' '));
+  const sp = document.createElement('span');
+  sp.className = 'word';
+  sp.textContent = w.text;
+  textDiv.appendChild(sp);
+  spans.push(sp);
+});
+
+// ── FIGURE ELEMENTS ─────────────────────────────────────────────
+const gBody    = document.getElementById('gBody');
+const gHead    = document.getElementById('gHead');
+const gArmL    = document.getElementById('gArmL');
+const gArmR    = document.getElementById('gArmR');
+const gSound   = document.getElementById('gSound');
+const gEyeRays = document.getElementById('gEyeRays');
+const gEyes    = document.getElementById('gEyes');
+const tipTitle = document.getElementById('tipTitle');
+const tipDesc  = document.getElementById('tipDesc');
+
+function clearFig() {
+  gBody.classList.remove('a-sway','a-bounce');
+  gHead.classList.remove('a-nod');
+  gArmL.classList.remove('a-waveL');
+  gArmR.classList.remove('a-waveR','a-pointR');
+  gEyes.classList.remove('a-eyemove');
+  gSound.style.opacity   = '0';
+  gEyeRays.style.opacity = '0';
+}
+
+function applyCue(cue) {
+  clearFig();
+  switch(cue) {
+    case 'posture':
+      gBody.classList.add('a-sway');
+      break;
+    case 'eye':
+      gHead.classList.add('a-nod');
+      gEyes.classList.add('a-eyemove');
+      gEyeRays.style.opacity = '1';
+      break;
+    case 'hands':
+      gArmL.classList.add('a-waveL');
+      gArmR.classList.add('a-waveR');
+      break;
+    case 'handsWide':
+      gArmL.classList.add('a-waveL');
+      gArmR.classList.add('a-waveR');
+      gBody.classList.add('a-sway');
+      break;
+    case 'point':
+      gArmR.classList.add('a-pointR');
+      break;
+    case 'heart':
+      gArmL.classList.add('a-waveL');
+      break;
+    case 'nod':
+      gHead.classList.add('a-nod');
+      break;
+    case 'bounce':
+      gBody.classList.add('a-bounce');
+      gArmL.classList.add('a-waveL');
+      gArmR.classList.add('a-waveR');
+      break;
+    case 'voice':
+      gSound.style.opacity = '1';
+      gBody.classList.add('a-breathe');
+      break;
+    case 'all':
+      gBody.classList.add('a-sway');
+      gHead.classList.add('a-nod');
+      gArmL.classList.add('a-waveL');
+      gArmR.classList.add('a-waveR');
+      gSound.style.opacity   = '1';
+      gEyeRays.style.opacity = '1';
+      break;
+  }
+}
+
+// ── SPEECH SYNTHESIS ────────────────────────────────────────────
+let utterance = null;
+let speaking  = false;
+let wordIndex = 0;
+let lastSeg   = -1;
+
+function buildText() {
+  return allWords.map(w => w.text).join(' ');
+}
+
+function clearHighlights() {
+  spans.forEach(s => s.classList.remove('active'));
+}
+
+function togglePlay() {
+  if (speaking) {
+    window.speechSynthesis.pause();
+    speaking = false;
+    document.getElementById('playBtn').textContent = '▶ Resume';
+    document.getElementById('status').textContent = 'Paused';
+  } else {
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+      speaking = true;
+      document.getElementById('playBtn').textContent = '⏸ Pause';
+      document.getElementById('status').textContent = 'Speaking… 🎤';
+    } else {
+      startSpeech();
+    }
+  }
+}
+
+function startSpeech() {
+  window.speechSynthesis.cancel();
+  clearHighlights();
+  wordIndex = 0;
+  lastSeg   = -1;
+
+  utterance = new SpeechSynthesisUtterance(buildText());
+  utterance.lang  = 'en-US';
+  utterance.rate  = parseFloat(document.getElementById('speed').value);
+
+  const voices = window.speechSynthesis.getVoices();
+  const v = voices.find(v => v.lang==='en-US' && /Samantha|Karen|Moira/.test(v.name))
+          || voices.find(v => v.lang==='en-US')
+          || voices.find(v => v.lang.startsWith('en'));
+  if (v) utterance.voice = v;
+
+  utterance.onboundary = (e) => {
+    if (e.name !== 'word') return;
+    clearHighlights();
+    if (wordIndex < spans.length) {
+      spans[wordIndex].classList.add('active');
+      spans[wordIndex].scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+      // Update tip when segment changes
+      const seg = allWords[wordIndex].seg;
+      if (seg !== lastSeg) {
+        lastSeg = seg;
+        const s = segments[seg];
+        tipTitle.textContent = s.tip;
+        tipDesc.textContent  = s.desc;
+        applyCue(s.cue);
+      }
+      wordIndex++;
+    }
+  };
+
+  utterance.onend = () => {
+    speaking = false;
+    clearHighlights();
+    clearFig();
+    gBody.classList.add('a-bounce');
+    gArmL.classList.add('a-waveL');
+    gArmR.classList.add('a-waveR');
+    gSound.style.opacity = '1';
+    document.getElementById('playBtn').textContent = '▶ Play';
+    document.getElementById('status').textContent  = '✅ Amazing job, Fatima! 🌟';
+    tipTitle.textContent = '🌟 You did it!';
+    tipDesc.textContent  = 'Perfect! Take a bow and smile at your audience.';
+  };
+
+  speaking = true;
+  document.getElementById('playBtn').textContent = '⏸ Pause';
+  document.getElementById('status').textContent  = 'Speaking… 🎤';
+  window.speechSynthesis.speak(utterance);
+}
+
+function stopAll() {
+  window.speechSynthesis.cancel();
+  speaking = false;
+  clearHighlights();
+  clearFig();
+  gBody.classList.add('a-sway');
+  document.getElementById('playBtn').textContent = '▶ Play';
+  document.getElementById('status').textContent  = 'Stopped.';
+  tipTitle.textContent = 'Get Ready! 🌟';
+  tipDesc.textContent  = 'Press Play and I\'ll guide you through your speech step by step.';
+}
+
+function updateSpeed() {
+  const v = parseFloat(document.getElementById('speed').value);
+  document.getElementById('speedVal').textContent = v.toFixed(1) + '×';
+  if (utterance) utterance.rate = v;
+}
+
+// Init
+window.speechSynthesis.onvoiceschanged = () => {};
+applyCue('posture');
+</script>
+</body>
+</html>
