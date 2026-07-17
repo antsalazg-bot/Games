@@ -1,0 +1,907 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🗺️ El Camino al Regalo</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap');
+
+  :root {
+    --purple: #A855F7;
+    --purple-dark: #7C3AED;
+    --pink: #EC4899;
+    --green: #4ADE80;
+    --green-dark: #16A34A;
+    --amber: #F59E0B;
+    --red: #EF4444;
+    --sky: #38BDF8;
+    --white: #FFFFFF;
+    --dark: #1E293B;
+    --card: #FFFBEB;
+    --gray: #E2E8F0;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: linear-gradient(180deg, #BAE6FD 0%, #7DD3FC 30%, #6EE7B7 60%, #4ADE80 100%);
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* ===== HEADER ===== */
+  #header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: rgba(255,255,255,0.93);
+    backdrop-filter: blur(8px);
+    padding: 10px 20px;
+    box-shadow: 0 2px 16px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  #header h1 {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.3rem;
+    color: var(--purple);
+  }
+
+  #progress-label {
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--dark);
+  }
+
+  #progress-bar-wrap {
+    width: 100%;
+    max-width: 500px;
+    height: 20px;
+    background: #E2E8F0;
+    border-radius: 99px;
+    overflow: hidden;
+    border: 2px solid #CBD5E1;
+  }
+
+  #progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #A855F7, #EC4899, #F59E0B);
+    border-radius: 99px;
+    transition: width 0.7s cubic-bezier(.4,2,.6,1);
+  }
+
+  #frase-wrap {
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 2px;
+  }
+
+  .letra-box {
+    width: 26px;
+    height: 30px;
+    border-bottom: 3px solid var(--purple);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1rem;
+    color: var(--purple);
+    transition: all 0.4s;
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+
+  .letra-box.space { border-bottom: none; width: 14px; }
+  .letra-box.visible { opacity: 1; transform: translateY(0); }
+
+  /* ===== MAPA ===== */
+  #mapa {
+    padding: 20px 16px 40px;
+    max-width: 600px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .estrella-deco {
+    position: absolute;
+    font-size: 1.4rem;
+    animation: float 3s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  @keyframes float {
+    0%,100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+
+  .nodo {
+    display: flex;
+    align-items: center;
+    margin: 6px 0;
+    gap: 12px;
+    position: relative;
+  }
+
+  .nodo.right { flex-direction: row-reverse; }
+
+  .nodo-circulo {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+    border: 4px solid white;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    transition: transform 0.2s;
+    position: relative;
+    z-index: 2;
+    cursor: default;
+  }
+
+  .nodo.active .nodo-circulo { cursor: pointer; }
+  .nodo.active .nodo-circulo:hover { transform: scale(1.08); }
+  .nodo.pending .nodo-circulo { background: #CBD5E1; color: #94A3B8; }
+  .nodo.correct .nodo-circulo { background: linear-gradient(135deg, #4ADE80, #16A34A); color: white; }
+  .nodo.wrong .nodo-circulo { background: linear-gradient(135deg, #F87171, #DC2626); color: white; }
+  .nodo.active .nodo-circulo { background: linear-gradient(135deg, #A855F7, #7C3AED); color: white; animation: pulse 1.5s infinite; }
+
+  @keyframes pulse {
+    0%,100% { box-shadow: 0 4px 12px rgba(168,85,247,0.4); }
+    50% { box-shadow: 0 4px 28px rgba(168,85,247,0.9); }
+  }
+
+  .conector {
+    height: 26px;
+    width: 6px;
+    background: #E2E8F0;
+    border-radius: 99px;
+    margin: 0 23px;
+    transition: background 0.5s;
+    position: relative;
+    z-index: 1;
+  }
+
+  .conector.done { background: linear-gradient(180deg, #4ADE80, #16A34A); }
+
+  .nodo-info {
+    background: white;
+    border-radius: 14px;
+    padding: 8px 14px;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--dark);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    max-width: 200px;
+    line-height: 1.3;
+  }
+
+  .nodo.pending .nodo-info { color: #94A3B8; }
+
+  /* Corazones de vidas */
+  .vidas-wrap {
+    font-size: 0.75rem;
+    margin-top: 3px;
+    letter-spacing: 2px;
+  }
+
+  #destino {
+    text-align: center;
+    margin-top: 16px;
+    padding: 20px;
+    background: white;
+    border-radius: 24px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+    border: 3px dashed #FCD34D;
+    opacity: 0.4;
+    transition: opacity 0.5s, transform 0.5s;
+    transform: scale(0.95);
+  }
+
+  #destino.unlocked {
+    opacity: 1; transform: scale(1);
+    border: 3px solid #FCD34D;
+    animation: glow 2s infinite;
+  }
+
+  @keyframes glow {
+    0%,100% { box-shadow: 0 8px 24px rgba(252,211,77,0.4); }
+    50% { box-shadow: 0 8px 40px rgba(252,211,77,0.9); }
+  }
+
+  #destino .emoji-grande { font-size: 3rem; }
+  #destino h2 { font-family: 'Fredoka One', cursive; color: var(--purple); font-size: 1.2rem; margin: 8px 0 4px; }
+  #destino p { font-size: 0.88rem; color: #64748B; }
+
+  /* ===== MODAL ===== */
+  #overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(15,23,42,0.75);
+    z-index: 200;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+
+  #overlay.show { display: flex; }
+
+  #modal {
+    background: var(--card);
+    border-radius: 28px;
+    padding: 24px 22px;
+    max-width: 430px;
+    width: 100%;
+    box-shadow: 0 24px 64px rgba(0,0,0,0.3);
+    animation: popIn 0.3s cubic-bezier(.4,2,.6,1);
+  }
+
+  @keyframes popIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+  }
+
+  #modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+  }
+
+  #modal-num {
+    font-family: 'Fredoka One', cursive;
+    font-size: 0.82rem;
+    color: var(--purple);
+    letter-spacing: 1px;
+    text-transform: uppercase;
+  }
+
+  #modal-vidas {
+    font-size: 1.1rem;
+    letter-spacing: 3px;
+  }
+
+  #modal-emoji { font-size: 2.5rem; margin-bottom: 6px; }
+
+  #modal-pregunta {
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.4rem;
+    color: var(--dark);
+    margin-bottom: 18px;
+    line-height: 1.35;
+  }
+
+  #opciones {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .opcion {
+    padding: 14px 8px;
+    border-radius: 16px;
+    border: 3px solid #E2E8F0;
+    background: white;
+    font-family: 'Nunito', sans-serif;
+    font-size: 1.05rem;
+    font-weight: 800;
+    color: var(--dark);
+    cursor: pointer;
+    transition: all 0.15s;
+    text-align: center;
+  }
+
+  .opcion:hover:not(:disabled) {
+    border-color: var(--purple);
+    background: #FAF5FF;
+    transform: scale(1.04);
+  }
+
+  .opcion.correcto { background: #DCFCE7; border-color: #16A34A; color: #15803D; }
+  .opcion.incorrecto { background: #FEE2E2; border-color: #DC2626; color: #DC2626; animation: shake 0.4s; }
+  .opcion.disabled-gray { background: #F1F5F9; color: #94A3B8; border-color: #E2E8F0; cursor: default; }
+
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    25% { transform: translateX(-6px); }
+    75% { transform: translateX(6px); }
+  }
+
+  #feedback {
+    text-align: center;
+    font-weight: 800;
+    font-size: 0.95rem;
+    min-height: 26px;
+    border-radius: 12px;
+    padding: 6px 10px;
+    margin-bottom: 10px;
+  }
+
+  #feedback.ok { color: #15803D; background: #DCFCE7; }
+  #feedback.fail { color: #DC2626; background: #FEE2E2; }
+  #feedback.warn { color: #92400E; background: #FEF3C7; }
+
+  #btn-continuar {
+    display: none;
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, #A855F7, #7C3AED);
+    color: white;
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.15rem;
+    border: none;
+    border-radius: 16px;
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+
+  #btn-continuar:hover { transform: scale(1.03); }
+
+  /* ===== RESET SCREEN ===== */
+  #reset-screen {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #1E293B, #7C3AED);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 28px;
+  }
+
+  #reset-screen.show { display: flex; }
+  #reset-screen .big-emoji { font-size: 4rem; margin-bottom: 12px; animation: wobble 0.6s infinite alternate; }
+  @keyframes wobble { to { transform: rotate(10deg) scale(1.1); } }
+  #reset-screen h2 { font-family: 'Fredoka One', cursive; font-size: 2rem; color: white; margin-bottom: 10px; }
+  #reset-screen p { color: rgba(255,255,255,0.85); font-size: 1rem; font-weight: 700; margin-bottom: 6px; }
+  #btn-reset {
+    margin-top: 20px;
+    padding: 16px 32px;
+    background: white;
+    color: var(--purple-dark);
+    font-family: 'Fredoka One', cursive;
+    font-size: 1.3rem;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+    transition: transform 0.15s;
+  }
+  #btn-reset:hover { transform: scale(1.05); }
+
+  /* ===== VICTORIA ===== */
+  #victoria {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(135deg, #7C3AED, #EC4899);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    text-align: center;
+    padding: 24px;
+  }
+
+  #victoria.show { display: flex; }
+  #victoria h1 { font-family: 'Fredoka One', cursive; font-size: 2.4rem; color: white; margin-bottom: 10px; animation: bounce 0.6s infinite alternate; }
+  @keyframes bounce { to { transform: translateY(-14px); } }
+  #victoria .big-emoji { font-size: 4.5rem; margin-bottom: 14px; }
+  #victoria p { font-size: 1rem; color: rgba(255,255,255,0.9); margin-bottom: 6px; font-weight: 700; }
+  #frase-final { background: white; border-radius: 20px; padding: 14px 24px; font-family: 'Fredoka One', cursive; font-size: 1.8rem; color: var(--purple); margin: 14px 0; letter-spacing: 2px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); text-transform: uppercase; }
+
+  .confetti { position: fixed; border-radius: 2px; animation: fall linear forwards; z-index: 301; pointer-events: none; }
+  @keyframes fall { from { transform: translateY(-20px) rotate(0deg); opacity: 1; } to { transform: translateY(110vh) rotate(720deg); opacity: 0; } }
+
+  @media (max-width: 400px) {
+    #modal-pregunta { font-size: 1.15rem; }
+    .opcion { font-size: 0.95rem; padding: 12px 6px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="header">
+  <h1>🗺️ Camino al Regalo</h1>
+  <div id="progress-label">0 de 10 preguntas · 0% completado</div>
+  <div id="progress-bar-wrap"><div id="progress-bar"></div></div>
+  <div id="frase-wrap"></div>
+</div>
+
+<div id="mapa">
+  <span class="estrella-deco" style="top:50px;left:8px;animation-delay:.3s">🌟</span>
+  <span class="estrella-deco" style="top:210px;right:6px;animation-delay:.9s">✨</span>
+  <span class="estrella-deco" style="top:430px;left:4px;animation-delay:.5s">🦋</span>
+  <span class="estrella-deco" style="top:650px;right:8px;animation-delay:1.2s">🌸</span>
+  <span class="estrella-deco" style="top:870px;left:6px;animation-delay:.7s">⭐</span>
+  <div id="nodos"></div>
+  <div id="destino">
+    <div class="emoji-grande">🎁</div>
+    <h2>¡Tu regalo te espera aquí!</h2>
+    <p>Completa todas las preguntas para descubrir dónde está</p>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div id="overlay">
+  <div id="modal">
+    <div id="modal-header">
+      <div id="modal-num">Pregunta <span id="num-actual"></span> de 10</div>
+      <div id="modal-vidas">❤️❤️❤️</div>
+    </div>
+    <div id="modal-emoji"></div>
+    <div id="modal-pregunta"></div>
+    <div id="opciones"></div>
+    <div id="feedback"></div>
+    <button id="btn-continuar" onclick="cerrarModal()">¡Siguiente parada! →</button>
+  </div>
+</div>
+
+<!-- RESET -->
+<div id="reset-screen">
+  <div class="big-emoji">😵</div>
+  <h2>¡Ups! 3 errores seguidos</h2>
+  <p>Las matemáticas son como un músculo…</p>
+  <p>¡hay que entrenarlas! 💪</p>
+  <p style="margin-top:12px;font-size:0.85rem;opacity:.7">El camino se reinicia con preguntas nuevas</p>
+  <button id="btn-reset" onclick="resetearJuego()">¡Volver a intentarlo! 🚀</button>
+</div>
+
+<!-- VICTORIA -->
+<div id="victoria">
+  <div class="big-emoji">🎉</div>
+  <h1>¡¡LO LOGRASTE!!</h1>
+  <p>Eres una campeona de las matemáticas 🏆</p>
+  <p>Tu regalo está escondido en:</p>
+  <div id="frase-final">oficina impresora</div>
+  <p style="margin-top:10px;font-size:0.88rem;opacity:.8">¡Corre a buscarlo! 🏃‍♀️✨</p>
+</div>
+
+<script>
+// ============================
+// BANCOS DE PREGUNTAS
+// ============================
+const BANCO_A = [
+  {
+    emoji: "🍕",
+    texto: "Sofía comió 3/8 de una pizza y su hermana comió 2/8. ¿Qué fracción de pizza queda?",
+    opciones: ["2/8", "3/8", "4/8", "5/8"],
+    correcta: 1,
+    tema: "Fracciones"
+  },
+  {
+    emoji: "🎒",
+    texto: "Una mochila cuesta $350. Está en oferta con 20% de descuento. ¿Cuánto pagas?",
+    opciones: ["$290", "$270", "$280", "$260"],
+    correcta: 2,
+    tema: "Descuentos"
+  },
+  {
+    emoji: "🔺",
+    texto: "Un triángulo tiene ángulos de 60° y 80°. ¿Cuánto mide el tercer ángulo? (Pista: los 3 suman 180°)",
+    opciones: ["50°", "30°", "40°", "60°"],
+    correcta: 2,
+    tema: "Geometría"
+  },
+  {
+    emoji: "🧩",
+    texto: "¿Cuál es el siguiente número? 2, 5, 10, 17, 26, ___",
+    opciones: ["33", "35", "37", "36"],
+    correcta: 2,
+    tema: "Secuencias con trampa"
+  },
+  {
+    emoji: "🐠",
+    texto: "Hay 48 peces en 4 peceras iguales. Si mueves 6 peces de una pecera a otra, ¿cuántos peces tiene la pecera más llena?",
+    opciones: ["12", "18", "16", "20"],
+    correcta: 1,
+    tema: "Razonamiento"
+  },
+  {
+    emoji: "⏰",
+    texto: "Son las 11:45 am. ¿Cuántos minutos faltan para las 2:10 pm?",
+    opciones: ["125 min", "145 min", "135 min", "115 min"],
+    correcta: 0,
+    tema: "Tiempo — ¡cuidado!"
+  },
+  {
+    emoji: "🛍️",
+    texto: "Compras 3 cosas que cuestan $45, $78 y $37. Pagas con un billete de $200. ¿Cuánto te dan de cambio?",
+    opciones: ["$30", "$50", "$40", "$45"],
+    correcta: 2,
+    tema: "Operaciones"
+  },
+  {
+    emoji: "📐",
+    texto: "Un cuadrado tiene perímetro de 36 cm. ¿Cuánto mide su área?",
+    opciones: ["72 cm²", "81 cm²", "64 cm²", "100 cm²"],
+    correcta: 1,
+    tema: "Área y perímetro"
+  },
+  {
+    emoji: "🎯",
+    texto: "El 25% de un número es 18. ¿Cuál es ese número?",
+    opciones: ["54", "72", "63", "81"],
+    correcta: 1,
+    tema: "Porcentajes"
+  },
+  {
+    emoji: "🚗",
+    texto: "Un carro recorre 120 km en 2 horas. ¿Cuánto tarda en recorrer 300 km al mismo ritmo?",
+    opciones: ["4 horas", "5 horas", "6 horas", "4.5 horas"],
+    correcta: 1,
+    tema: "Proporciones"
+  }
+];
+
+const BANCO_B = [
+  {
+    emoji: "🌮",
+    texto: "Si 5 tacos cuestan $65, ¿cuánto cuestan 8 tacos?",
+    opciones: ["$96", "$100", "$104", "$108"],
+    correcta: 2,
+    tema: "Proporciones"
+  },
+  {
+    emoji: "🎨",
+    texto: "Mezclas 2/5 de pintura azul con 1/5 de amarilla. ¿Qué fracción del bote usaste en total?",
+    opciones: ["1/5", "2/5", "3/5", "4/5"],
+    correcta: 2,
+    tema: "Fracciones"
+  },
+  {
+    emoji: "📦",
+    texto: "Una caja contiene 144 chocolates en 12 filas iguales. Si comes una fila entera, ¿cuántos quedan?",
+    opciones: ["122", "130", "132", "128"],
+    correcta: 2,
+    tema: "Multiplicación y resta"
+  },
+  {
+    emoji: "🌡️",
+    texto: "En la mañana hay 8°C. Al mediodía subió 15° y en la noche bajó 9°. ¿Cuántos grados hay en la noche?",
+    opciones: ["12°C", "14°C", "16°C", "18°C"],
+    correcta: 1,
+    tema: "Números con trampa"
+  },
+  {
+    emoji: "🏊‍♀️",
+    texto: "Una alberca mide 25m de largo. Luisa nada 8 vueltas completas (ida y vuelta). ¿Cuántos metros nadó?",
+    opciones: ["200 m", "300 m", "350 m", "400 m"],
+    correcta: 3,
+    tema: "¡Ojo con 'vuelta'!"
+  },
+  {
+    emoji: "🧁",
+    texto: "Una receta para 12 cupcakes usa 3 tazas de harina. ¿Cuántas tazas necesitas para hacer 20 cupcakes?",
+    opciones: ["4 tazas", "5 tazas", "6 tazas", "4.5 tazas"],
+    correcta: 1,
+    tema: "Regla de tres"
+  },
+  {
+    emoji: "📚",
+    texto: "Tienes 5 libros diferentes. ¿De cuántas formas distintas puedes acomodar los primeros 2 en un estante?",
+    opciones: ["10", "15", "20", "25"],
+    correcta: 2,
+    tema: "Combinaciones"
+  },
+  {
+    emoji: "🌀",
+    texto: "¿Cuál número NO es múltiplo de 6? (Pista: un múltiplo de 6 también es múltiplo de 2 y de 3)",
+    opciones: ["42", "54", "68", "78"],
+    correcta: 2,
+    tema: "Divisibilidad"
+  },
+  {
+    emoji: "🎪",
+    texto: "En un salón hay 30 estudiantes. El 40% son niños. ¿Cuántas niñas hay?",
+    opciones: ["12", "16", "18", "20"],
+    correcta: 2,
+    tema: "Porcentajes cotidianos"
+  },
+  {
+    emoji: "👟",
+    texto: "Unos tenis cuestan $400. Primero los rebajan 20%, y luego ese precio tiene otro 10% de descuento. ¿Cuánto cuestan al final?",
+    opciones: ["$280", "$288", "$300", "$320"],
+    correcta: 1,
+    tema: "Descuento doble — ¡trampa!"
+  }
+];
+
+const FRASE = "oficina impresora";
+const FRASE_ARR = [...FRASE];
+
+const LETRAS_POR_PREGUNTA = [
+  [0,1], [2,3], [4,5], [6,7], [8,9],
+  [10,11], [12,13], [14], [15], [16]
+];
+
+const ICONOS  = ['🏠','🌲','🏔️','🌊','🌸','🦋','⭐','🌙','🎈','🎁'];
+const PARADAS = ['Inicio del camino','El bosque mágico','La montaña nevada','El río cristalino','El jardín de flores','El valle de mariposas','La colina de estrellas','El lago lunar','El puente de globos','¡La meta!'];
+
+// ============================
+// ESTADO
+// ============================
+let bancoActual, preguntas, estado;
+
+function initEstado(banco) {
+  bancoActual = banco;
+  preguntas = banco === 'A' ? [...BANCO_A] : [...BANCO_B];
+  estado = {
+    correctas: 0,
+    respuestas: new Array(10).fill(null),
+    preguntaActual: null,
+    intentosActuales: 0,
+    letrasVisibles: new Array(FRASE_ARR.length).fill(false),
+    opcionesEliminadas: []
+  };
+}
+
+// ============================
+// BUILD UI
+// ============================
+function buildFrase() {
+  const wrap = document.getElementById('frase-wrap');
+  wrap.innerHTML = '';
+  FRASE_ARR.forEach((letra, i) => {
+    const div = document.createElement('div');
+    div.className = 'letra-box' + (letra === ' ' ? ' space' : '');
+    div.id = `letra-${i}`;
+    wrap.appendChild(div);
+  });
+}
+
+function buildNodos() {
+  const wrap = document.getElementById('nodos');
+  wrap.innerHTML = '';
+  for (let i = 0; i < 10; i++) {
+    if (i > 0) {
+      const con = document.createElement('div');
+      con.className = 'conector';
+      con.id = `conector-${i}`;
+      wrap.appendChild(con);
+    }
+    const nodo = document.createElement('div');
+    nodo.className = 'nodo pending' + (i % 2 === 1 ? ' right' : '');
+    nodo.id = `nodo-${i}`;
+    nodo.onclick = () => { if (nodo.classList.contains('active')) abrirPregunta(i); };
+
+    const circulo = document.createElement('div');
+    circulo.className = 'nodo-circulo';
+    circulo.textContent = ICONOS[i];
+
+    const infoWrap = document.createElement('div');
+    infoWrap.className = 'nodo-info';
+    infoWrap.innerHTML = `<div>Parada ${i+1}: ${PARADAS[i]}</div><div class="vidas-wrap" id="vidas-nodo-${i}"></div>`;
+
+    nodo.appendChild(circulo);
+    nodo.appendChild(infoWrap);
+    wrap.appendChild(nodo);
+  }
+}
+
+function vidasEmoji(intentos) {
+  const max = 3;
+  const restantes = max - intentos;
+  return '❤️'.repeat(Math.max(restantes,0)) + '🖤'.repeat(Math.max(intentos,0));
+}
+
+// ============================
+// FLUJO
+// ============================
+function activarNodo(idx) {
+  const nodo = document.getElementById(`nodo-${idx}`);
+  if (!nodo) return;
+  nodo.classList.remove('pending','correct','wrong');
+  nodo.classList.add('active');
+  setTimeout(() => nodo.scrollIntoView({ behavior:'smooth', block:'center' }), 200);
+  setTimeout(() => abrirPregunta(idx), 600);
+}
+
+function abrirPregunta(idx) {
+  if (estado.respuestas[idx] !== null) return;
+  estado.preguntaActual = idx;
+  estado.intentosActuales = 0;
+  estado.opcionesEliminadas = [];
+  renderModal();
+  document.getElementById('overlay').classList.add('show');
+}
+
+function renderModal() {
+  const idx = estado.preguntaActual;
+  const p = preguntas[idx];
+  const intentos = estado.intentosActuales;
+
+  document.getElementById('num-actual').textContent = idx + 1;
+  document.getElementById('modal-vidas').textContent = vidasEmoji(intentos);
+  document.getElementById('modal-emoji').textContent = p.emoji;
+  document.getElementById('modal-pregunta').textContent = p.texto;
+  document.getElementById('feedback').textContent = '';
+  document.getElementById('feedback').className = '';
+  document.getElementById('btn-continuar').style.display = 'none';
+
+  const ops = document.getElementById('opciones');
+  ops.innerHTML = '';
+  p.opciones.forEach((op, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'opcion';
+    btn.textContent = op;
+    btn.id = `opcion-${i}`;
+    if (estado.opcionesEliminadas.includes(i)) {
+      btn.classList.add('disabled-gray');
+      btn.disabled = true;
+    } else {
+      btn.onclick = () => responder(i, btn);
+    }
+    ops.appendChild(btn);
+  });
+}
+
+function responder(idx, btn) {
+  const pidx = estado.preguntaActual;
+  const p = preguntas[pidx];
+  const esCorrecta = idx === p.correcta;
+  const fb = document.getElementById('feedback');
+
+  if (esCorrecta) {
+    // CORRECTO
+    btn.classList.add('correcto');
+    document.querySelectorAll('.opcion').forEach(b => b.disabled = true);
+    fb.textContent = '¡Correcto! 🎉 ¡Sigue adelante!';
+    fb.className = 'ok';
+    estado.correctas++;
+    estado.respuestas[pidx] = 'correct';
+    LETRAS_POR_PREGUNTA[pidx].forEach(li => { estado.letrasVisibles[li] = true; });
+    document.getElementById('btn-continuar').style.display = 'block';
+    // actualizar vidas nodo
+    const vn = document.getElementById(`vidas-nodo-${pidx}`);
+    if (vn) vn.textContent = '';
+
+  } else {
+    // INCORRECTO
+    estado.intentosActuales++;
+    estado.opcionesEliminadas.push(idx);
+    btn.classList.add('incorrecto');
+    btn.disabled = true;
+
+    const restantes = 3 - estado.intentosActuales;
+
+    if (estado.intentosActuales >= 3) {
+      // 3 errores → reset
+      fb.textContent = '😵 ¡3 errores! El camino se reinicia con nuevas preguntas…';
+      fb.className = 'fail';
+      document.querySelectorAll('.opcion').forEach(b => b.disabled = true);
+      setTimeout(() => {
+        document.getElementById('overlay').classList.remove('show');
+        setTimeout(() => mostrarReset(), 400);
+      }, 1800);
+    } else {
+      // Puede seguir intentando
+      const mensajes = [
+        `¡Casi! Te queda${restantes === 1 ? '' : 'n'} ${restantes} intento${restantes === 1 ? '' : 's'} — ¡piénsalo bien! 🤔`,
+        `Esa no es... ¡1 intento más! Razona con calma 💪`
+      ];
+      fb.textContent = mensajes[estado.intentosActuales - 1] || mensajes[0];
+      fb.className = 'warn';
+      // Actualizar vidas
+      document.getElementById('modal-vidas').textContent = vidasEmoji(estado.intentosActuales);
+      const vn = document.getElementById(`vidas-nodo-${pidx}`);
+      if (vn) vn.textContent = vidasEmoji(estado.intentosActuales);
+      // Re-habilitar opciones restantes después de un momento
+      setTimeout(() => {
+        document.querySelectorAll('.opcion').forEach((b, i) => {
+          if (!estado.opcionesEliminadas.includes(i)) {
+            b.disabled = false;
+            b.classList.remove('incorrecto');
+          }
+        });
+      }, 800);
+    }
+  }
+}
+
+function cerrarModal() {
+  document.getElementById('overlay').classList.remove('show');
+  const idx = estado.preguntaActual;
+  const resultado = estado.respuestas[idx];
+
+  const nodo = document.getElementById(`nodo-${idx}`);
+  nodo.classList.remove('active');
+  nodo.classList.add(resultado === 'correct' ? 'correct' : 'wrong');
+
+  if (idx > 0 && resultado === 'correct') {
+    const con = document.getElementById(`conector-${idx}`);
+    if (con) con.classList.add('done');
+  }
+
+  updateHeader();
+
+  const siguiente = idx + 1;
+  if (siguiente < 10) {
+    setTimeout(() => activarNodo(siguiente), 600);
+  } else {
+    setTimeout(() => victoria(), 800);
+  }
+}
+
+function mostrarReset() {
+  document.getElementById('reset-screen').classList.add('show');
+}
+
+function resetearJuego() {
+  document.getElementById('reset-screen').classList.remove('show');
+  // Cambiar banco
+  const nuevoBanco = bancoActual === 'A' ? 'B' : 'A';
+  initEstado(nuevoBanco);
+  buildFrase();
+  buildNodos();
+  updateHeader();
+  document.getElementById('progress-bar').style.width = '0%';
+  document.getElementById('destino').classList.remove('unlocked');
+  setTimeout(() => activarNodo(0), 500);
+}
+
+function updateHeader() {
+  const respondidas = estado.respuestas.filter(r => r !== null).length;
+  const pct = Math.round((respondidas / 10) * 100);
+  document.getElementById('progress-bar').style.width = pct + '%';
+  document.getElementById('progress-label').textContent =
+    `${respondidas} de 10 preguntas · ${pct}% completado`;
+
+  FRASE_ARR.forEach((letra, i) => {
+    const el = document.getElementById(`letra-${i}`);
+    if (!el) return;
+    if (letra === ' ') { el.classList.add('visible'); return; }
+    if (estado.letrasVisibles[i]) {
+      el.textContent = letra.toUpperCase();
+      el.classList.add('visible');
+    }
+  });
+
+  if (respondidas === 10) {
+    document.getElementById('destino').classList.add('unlocked');
+  }
+}
+
+function victoria() {
+  lanzarConfeti();
+  document.getElementById('victoria').classList.add('show');
+}
+
+function lanzarConfeti() {
+  const colores = ['#A855F7','#EC4899','#F59E0B','#4ADE80','#38BDF8','#FCD34D','#EF4444'];
+  for (let i = 0; i < 150; i++) {
+    setTimeout(() => {
+      const el = document.createElement('div');
+      el.className = 'confetti';
+      el.style.cssText = `left:${Math.random()*100}vw;top:-20px;background:${colores[Math.floor(Math.random()*colores.length)]};width:${Math.random()*10+6}px;height:${Math.random()*10+6}px;animation-duration:${Math.random()*2+2}s;animation-delay:${Math.random()*0.5}s`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 4500);
+    }, i * 25);
+  }
+}
+
+// ============================
+// ARRANCAR
+// ============================
+initEstado('A');
+buildFrase();
+buildNodos();
+updateHeader();
+setTimeout(() => activarNodo(0), 500);
+</script>
+</body>
+</html>
